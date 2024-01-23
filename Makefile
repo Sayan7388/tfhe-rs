@@ -88,6 +88,12 @@ install_rs_check_toolchain:
 	( echo "Unable to install $(RS_CHECK_TOOLCHAIN) toolchain, check your rustup installation. \
 	Rustup can be downloaded at https://rustup.rs/" && exit 1 )
 
+.PHONY: install_check_toolchain_wasm32_target # Install the wasm32 target in addition to the check toolchain
+install_rs_check_toolchain_wasm32_target: install_rs_check_toolchain
+	@rustup target add --toolchain "$(RS_CHECK_TOOLCHAIN)" wasm32-unknown-unknown || \
+	( echo "Unable to add wasm32 target for $(RS_CHECK_TOOLCHAIN) toolchain, check your rustup installation. \
+	Rustup can be downloaded at https://rustup.rs/" && exit 1 )
+
 .PHONY: install_rs_build_toolchain # Install the toolchain used for builds
 install_rs_build_toolchain:
 	@( rustup toolchain list | grep -q "$(RS_BUILD_TOOLCHAIN)" && \
@@ -197,6 +203,13 @@ clippy: install_rs_check_toolchain
 		--features=$(TARGET_ARCH_FEATURE),boolean,shortint,integer \
 		-p $(TFHE_SPEC) -- --no-deps -D warnings
 
+.PHONY: clippy_wasm # Run clippy lints enabling the boolean, shortint, integer for the wasm target
+clippy_wasm: install_rs_check_toolchain_wasm32_target
+	RUSTFLAGS="$(WASM_RUSTFLAGS)" cargo "$(CARGO_RS_CHECK_TOOLCHAIN)" clippy \
+		--target wasm32-unknown-unknown \
+		--features=boolean,shortint,integer \
+		-p $(TFHE_SPEC) -- --no-deps -D warnings
+
 .PHONY: clippy_c_api # Run clippy lints enabling the boolean, shortint and the C API
 clippy_c_api: install_rs_check_toolchain
 	RUSTFLAGS="$(RUSTFLAGS)" cargo "$(CARGO_RS_CHECK_TOOLCHAIN)" clippy \
@@ -204,8 +217,9 @@ clippy_c_api: install_rs_check_toolchain
 		-p $(TFHE_SPEC) -- --no-deps -D warnings
 
 .PHONY: clippy_js_wasm_api # Run clippy lints enabling the boolean, shortint, integer and the js wasm API
-clippy_js_wasm_api: install_rs_check_toolchain
-	RUSTFLAGS="$(RUSTFLAGS)" cargo "$(CARGO_RS_CHECK_TOOLCHAIN)" clippy \
+clippy_js_wasm_api: install_check_toolchain_wasm32_target
+	RUSTFLAGS="$(WASM_RUSTFLAGS)" cargo "$(CARGO_RS_CHECK_TOOLCHAIN)" clippy \
+		--target wasm32-unknown-unknown \
 		--features=boolean-client-js-wasm-api,shortint-client-js-wasm-api,integer-client-js-wasm-api \
 		-p $(TFHE_SPEC) -- --no-deps -D warnings
 
@@ -276,6 +290,13 @@ build_integer: install_rs_build_toolchain
 build_tfhe_full: install_rs_build_toolchain
 	RUSTFLAGS="$(RUSTFLAGS)" cargo $(CARGO_RS_BUILD_TOOLCHAIN) build --profile $(CARGO_PROFILE) \
 		--features=$(TARGET_ARCH_FEATURE),boolean,shortint,integer -p $(TFHE_SPEC) --all-targets
+
+.PHONY: build_tfhe_full_wasm # Build with boolean, shortint and integer enabled for wasm target
+build_tfhe_full_wasm: install_rs_check_toolchain_wasm32_target
+	RUSTFLAGS="$(WASM_RUSTFLAGS)" \
+		cargo $(CARGO_RS_CHECK_TOOLCHAIN) build --profile $(CARGO_PROFILE) \
+		--target wasm32-unknown-unknown \
+		--features=boolean,shortint,integer -p $(TFHE_SPEC)
 
 .PHONY: symlink_c_libs_without_fingerprint # Link the .a and .so files without the changing hash part in target
 symlink_c_libs_without_fingerprint:

@@ -63,6 +63,10 @@ jobs:
         run: |
           make build_tfhe_full
 
+      - name: Build Release tfhe full wasm
+        run: |
+          make build_tfhe_full_wasm
+
       - name: Build Release c_api
         run: |
           make build_c_api
