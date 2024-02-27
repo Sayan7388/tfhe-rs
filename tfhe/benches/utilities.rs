@@ -8,6 +8,7 @@ use tfhe::core_crypto::prelude::*;
 use tfhe::shortint::parameters::ShortintKeySwitchingParameters;
 #[cfg(feature = "shortint")]
 use tfhe::shortint::PBSParameters;
+use tfhe::shortint::WopbsParameters;
 
 #[derive(Clone, Copy, Default, Serialize)]
 pub struct CryptoParametersRecord<Scalar: UnsignedInteger> {
@@ -111,6 +112,36 @@ impl<Scalar: UnsignedInteger> From<ShortintKeySwitchingParameters>
             message_modulus: None,
             carry_modulus: None,
             ciphertext_modulus: None,
+        }
+    }
+}
+
+#[cfg(feature = "shortint")]
+impl<Scalar: UnsignedInteger> From<WopbsParameters> for CryptoParametersRecord<Scalar> {
+    fn from(params: WopbsParameters) -> Self {
+        CryptoParametersRecord {
+            lwe_dimension: Some(params.lwe_dimension),
+            glwe_dimension: Some(params.glwe_dimension),
+            polynomial_size: Some(params.polynomial_size),
+            lwe_modular_std_dev: Some(params.lwe_modular_std_dev),
+            glwe_modular_std_dev: Some(params.glwe_modular_std_dev),
+            pbs_base_log: Some(params.pbs_base_log),
+            pbs_level: Some(params.pbs_level),
+            ks_base_log: Some(params.ks_base_log),
+            ks_level: Some(params.ks_level),
+            pfks_level: Some(params.pfks_level),
+            pfks_base_log: Some(params.pfks_base_log),
+            pfks_modular_std_dev: Some(params.pfks_modular_std_dev),
+            cbs_level: Some(params.cbs_level),
+            cbs_base_log: Some(params.cbs_base_log),
+            message_modulus: Some(params.message_modulus.0),
+            carry_modulus: Some(params.carry_modulus.0),
+            ciphertext_modulus: Some(
+                params
+                    .ciphertext_modulus
+                    .try_to()
+                    .expect("failed to convert ciphertext modulus"),
+            ),
         }
     }
 }
