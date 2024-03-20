@@ -646,6 +646,23 @@ pub const PARAM_MESSAGE_1_CARRY_1_KS_PBS: ClassicPBSParameters = ClassicPBSParam
     ciphertext_modulus: CiphertextModulus::new_native(),
     encryption_key_choice: EncryptionKeyChoice::Big,
 };
+
+// p-fail = 2^-80.055, algorithmic cost ~ 48, 2-norm = 3
+pub const PARAM_MESSAGE_1_CARRY_1_KS_PBS_2P80: ClassicPBSParameters = ClassicPBSParameters {
+    lwe_dimension: LweDimension(750),
+    glwe_dimension: GlweDimension(3),
+    polynomial_size: PolynomialSize(512),
+    lwe_noise_distribution: DynamicDistribution::new_gaussian_from_std_dev(StandardDev(7.80022098045968e-06)),
+    glwe_noise_distribution: DynamicDistribution::new_gaussian_from_std_dev(StandardDev(3.966608917163306e-12)),
+    pbs_base_log: DecompositionBaseLog(18),
+    pbs_level: DecompositionLevelCount(1),
+    ks_base_log: DecompositionBaseLog(3),
+    ks_level: DecompositionLevelCount(5),
+    message_modulus: MessageModulus(2),
+    carry_modulus: CarryModulus(2),
+    ciphertext_modulus: CiphertextModulus::new_native(),
+    encryption_key_choice: EncryptionKeyChoice::Big,
+};
 pub const PARAM_MESSAGE_2_CARRY_0_KS_PBS: ClassicPBSParameters = ClassicPBSParameters {
     lwe_dimension: LweDimension(656),
     glwe_dimension: GlweDimension(2),

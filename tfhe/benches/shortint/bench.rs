@@ -14,11 +14,14 @@ use tfhe::shortint::keycache::{KEY_CACHE, KEY_CACHE_WOPBS};
 
 use tfhe::shortint::parameters::parameters_wopbs::WOPBS_PARAM_MESSAGE_4_NORM2_6_KS_PBS;
 
-const SERVER_KEY_BENCH_PARAMS: [ClassicPBSParameters; 4] = [
-    PARAM_MESSAGE_1_CARRY_1_KS_PBS,
-    PARAM_MESSAGE_2_CARRY_2_KS_PBS,
-    PARAM_MESSAGE_3_CARRY_3_KS_PBS,
-    PARAM_MESSAGE_4_CARRY_4_KS_PBS,
+// const SERVER_KEY_BENCH_PARAMS: [ClassicPBSParameters; 4] = [
+//     PARAM_MESSAGE_1_CARRY_1_KS_PBS,
+//     PARAM_MESSAGE_2_CARRY_2_KS_PBS,
+//     PARAM_MESSAGE_3_CARRY_3_KS_PBS,
+//     PARAM_MESSAGE_4_CARRY_4_KS_PBS,
+// ];
+const SERVER_KEY_BENCH_PARAMS: [ClassicPBSParameters; 1] = [
+    PARAM_MESSAGE_1_CARRY_1_KS_PBS_2P80,
 ];
 
 const SERVER_KEY_BENCH_PARAMS_EXTENDED: [ClassicPBSParameters; 8] = [
@@ -778,11 +781,11 @@ criterion_group!(
 
 criterion_group!(
     default_ops,
-    programmable_bootstrapping,
+    // programmable_bootstrapping,
     // neg,
-    // bitand,
-    // bitor,
-    // bitxor,
+    bitand,
+    bitor,
+    bitxor,
     // add,
     // sub,
     // div,

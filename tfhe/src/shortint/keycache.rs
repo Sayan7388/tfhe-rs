@@ -253,6 +253,7 @@ named_params_impl!( ShortintParameterSet =>
     COVERAGE_PARAM_MESSAGE_2_CARRY_2_COMPACT_PK_PBS_KS,
     #[cfg(tarpaulin)]
     COVERAGE_PARAM_MESSAGE_2_CARRY_2_COMPACT_PK_KS_PBS,
+    PARAM_MESSAGE_1_CARRY_1_KS_PBS_2P80,
 );
 
 impl NamedParam for ClassicPBSParameters {
