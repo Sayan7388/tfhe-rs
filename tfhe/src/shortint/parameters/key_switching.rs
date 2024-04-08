@@ -27,6 +27,6 @@ impl ShortintKeySwitchingParameters {
 
 pub const PARAM_KEYSWITCH_1_1_KS_PBS_TO_2_2_KS_PBS: ShortintKeySwitchingParameters =
     ShortintKeySwitchingParameters {
-        ks_level: DecompositionLevelCount(15),
-        ks_base_log: DecompositionBaseLog(1),
+        ks_base_log: DecompositionBaseLog(6),
+        ks_level: DecompositionLevelCount(2),
     };
