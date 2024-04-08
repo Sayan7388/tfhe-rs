@@ -753,6 +753,7 @@ mod tests {
     #[cfg(tarpaulin)]
     use crate::shortint::parameters::coverage_parameters::*;
     use crate::shortint::parameters::*;
+use crate::shortint::parameters::classic::compact_pk::tuniform::p_fail_2_minus_40::ks_pbs::*;
 
     create_parametrized_test!(boolean_bitxor);
     create_parametrized_test!(boolean_bitor);

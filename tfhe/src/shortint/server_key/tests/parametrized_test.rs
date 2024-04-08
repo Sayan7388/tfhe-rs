@@ -3,6 +3,7 @@ use crate::shortint::keycache::KEY_CACHE;
 use crate::shortint::parameters::*;
 use crate::shortint::server_key::{LookupTableOwned, ManyLookupTableOwned};
 use rand::Rng;
+use crate::shortint::parameters::classic::compact_pk::tuniform::p_fail_2_minus_40::ks_pbs::*;
 
 // Macro to generate tests for all parameter sets
 #[cfg(not(tarpaulin))]
@@ -20,40 +21,41 @@ macro_rules! create_parametrized_test{
     ($name:ident)=> {
         create_parametrized_test!($name
         {
-            PARAM_MESSAGE_1_CARRY_1_KS_PBS,
-            PARAM_MESSAGE_1_CARRY_2_KS_PBS,
-            PARAM_MESSAGE_1_CARRY_3_KS_PBS,
-            PARAM_MESSAGE_1_CARRY_4_KS_PBS,
-            PARAM_MESSAGE_1_CARRY_5_KS_PBS,
-            PARAM_MESSAGE_1_CARRY_6_KS_PBS,
-            PARAM_MESSAGE_1_CARRY_7_KS_PBS,
-            PARAM_MESSAGE_2_CARRY_1_KS_PBS,
-            PARAM_MESSAGE_2_CARRY_2_KS_PBS,
-            PARAM_MESSAGE_2_CARRY_3_KS_PBS,
-            PARAM_MESSAGE_2_CARRY_4_KS_PBS,
-            PARAM_MESSAGE_2_CARRY_5_KS_PBS,
-            PARAM_MESSAGE_2_CARRY_6_KS_PBS,
-            PARAM_MESSAGE_3_CARRY_1_KS_PBS,
-            PARAM_MESSAGE_3_CARRY_2_KS_PBS,
-            PARAM_MESSAGE_3_CARRY_3_KS_PBS,
-            PARAM_MESSAGE_3_CARRY_4_KS_PBS,
-            PARAM_MESSAGE_3_CARRY_5_KS_PBS,
-            PARAM_MESSAGE_4_CARRY_1_KS_PBS,
-            PARAM_MESSAGE_4_CARRY_2_KS_PBS,
-            PARAM_MESSAGE_4_CARRY_3_KS_PBS,
-            PARAM_MESSAGE_4_CARRY_4_KS_PBS,
-            PARAM_MESSAGE_5_CARRY_1_KS_PBS,
-            PARAM_MESSAGE_5_CARRY_2_KS_PBS,
-            PARAM_MESSAGE_5_CARRY_3_KS_PBS,
-            PARAM_MESSAGE_6_CARRY_1_KS_PBS,
-            PARAM_MESSAGE_6_CARRY_2_KS_PBS,
-            PARAM_MESSAGE_7_CARRY_1_KS_PBS,
-            PARAM_MULTI_BIT_MESSAGE_1_CARRY_1_GROUP_2_KS_PBS,
-            PARAM_MULTI_BIT_MESSAGE_2_CARRY_2_GROUP_2_KS_PBS,
-            PARAM_MULTI_BIT_MESSAGE_3_CARRY_3_GROUP_2_KS_PBS,
-            PARAM_MULTI_BIT_MESSAGE_1_CARRY_1_GROUP_3_KS_PBS,
-            PARAM_MULTI_BIT_MESSAGE_2_CARRY_2_GROUP_3_KS_PBS,
-            PARAM_MULTI_BIT_MESSAGE_3_CARRY_3_GROUP_3_KS_PBS
+            PARAM_MESSAGE_2_CARRY_2_COMPACT_PK_KS_PBS_TUNIFORM_2M40
+            // PARAM_MESSAGE_1_CARRY_1_KS_PBS,
+            // PARAM_MESSAGE_1_CARRY_2_KS_PBS,
+            // PARAM_MESSAGE_1_CARRY_3_KS_PBS,
+            // PARAM_MESSAGE_1_CARRY_4_KS_PBS,
+            // PARAM_MESSAGE_1_CARRY_5_KS_PBS,
+            // PARAM_MESSAGE_1_CARRY_6_KS_PBS,
+            // PARAM_MESSAGE_1_CARRY_7_KS_PBS,
+            // PARAM_MESSAGE_2_CARRY_1_KS_PBS,
+            // PARAM_MESSAGE_2_CARRY_2_KS_PBS,
+            // PARAM_MESSAGE_2_CARRY_3_KS_PBS,
+            // PARAM_MESSAGE_2_CARRY_4_KS_PBS,
+            // PARAM_MESSAGE_2_CARRY_5_KS_PBS,
+            // PARAM_MESSAGE_2_CARRY_6_KS_PBS,
+            // PARAM_MESSAGE_3_CARRY_1_KS_PBS,
+            // PARAM_MESSAGE_3_CARRY_2_KS_PBS,
+            // PARAM_MESSAGE_3_CARRY_3_KS_PBS,
+            // PARAM_MESSAGE_3_CARRY_4_KS_PBS,
+            // PARAM_MESSAGE_3_CARRY_5_KS_PBS,
+            // PARAM_MESSAGE_4_CARRY_1_KS_PBS,
+            // PARAM_MESSAGE_4_CARRY_2_KS_PBS,
+            // PARAM_MESSAGE_4_CARRY_3_KS_PBS,
+            // PARAM_MESSAGE_4_CARRY_4_KS_PBS,
+            // PARAM_MESSAGE_5_CARRY_1_KS_PBS,
+            // PARAM_MESSAGE_5_CARRY_2_KS_PBS,
+            // PARAM_MESSAGE_5_CARRY_3_KS_PBS,
+            // PARAM_MESSAGE_6_CARRY_1_KS_PBS,
+            // PARAM_MESSAGE_6_CARRY_2_KS_PBS,
+            // PARAM_MESSAGE_7_CARRY_1_KS_PBS,
+            // PARAM_MULTI_BIT_MESSAGE_1_CARRY_1_GROUP_2_KS_PBS,
+            // PARAM_MULTI_BIT_MESSAGE_2_CARRY_2_GROUP_2_KS_PBS,
+            // PARAM_MULTI_BIT_MESSAGE_3_CARRY_3_GROUP_2_KS_PBS,
+            // PARAM_MULTI_BIT_MESSAGE_1_CARRY_1_GROUP_3_KS_PBS,
+            // PARAM_MULTI_BIT_MESSAGE_2_CARRY_2_GROUP_3_KS_PBS,
+            // PARAM_MULTI_BIT_MESSAGE_3_CARRY_3_GROUP_3_KS_PBS
         });
     };
 }

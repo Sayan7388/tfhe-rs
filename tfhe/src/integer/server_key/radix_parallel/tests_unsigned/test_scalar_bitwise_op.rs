@@ -7,6 +7,7 @@ use crate::integer::ServerKey;
 #[cfg(tarpaulin)]
 use crate::shortint::parameters::coverage_parameters::*;
 use crate::shortint::parameters::*;
+use crate::shortint::parameters::classic::compact_pk::tuniform::p_fail_2_minus_40::ks_pbs::*;
 
 create_parametrized_test!(integer_default_scalar_bitand);
 create_parametrized_test!(integer_default_scalar_bitor);

@@ -4,6 +4,7 @@ use crate::integer::IntegerKeyKind;
 #[cfg(tarpaulin)]
 use crate::shortint::parameters::coverage_parameters::*;
 use crate::shortint::parameters::*;
+use crate::shortint::parameters::classic::compact_pk::tuniform::p_fail_2_minus_40::ks_pbs::*;
 use rand::Rng;
 
 create_parametrized_test_classical_params!(integer_unchecked_crt_mul);

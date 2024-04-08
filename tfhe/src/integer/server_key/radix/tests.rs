@@ -11,6 +11,7 @@ use crate::integer::{IntegerKeyKind, RadixCiphertext, ServerKey, SignedRadixCiph
 #[cfg(tarpaulin)]
 use crate::shortint::parameters::coverage_parameters::*;
 use crate::shortint::parameters::*;
+use crate::shortint::parameters::classic::compact_pk::tuniform::p_fail_2_minus_40::ks_pbs::*;
 use rand::Rng;
 
 /// Number of loop iteration within randomized tests

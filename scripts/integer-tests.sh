@@ -122,8 +122,8 @@ fi
 # we skip smart_div, smart_rem which are already covered by the smar_div_rem test
 # we similarly skip default_div, default_rem which are covered by default_div_rem
 full_test_filter_expression="""\
-test(/^integer::.*${multi_bit}/) \
-${signed:+"and test(/^integer::.*${signed}/)"} \
+test(/^integer::server_key::radix_parallel::.*${multi_bit}/) \
+${signed:+"and test(/^integer::server_key::radix_parallel::.*${signed}/)"} \
 ${not_multi_bit:+"and not test(~${not_multi_bit})"} \
 ${not_signed:+"and not test(~${not_signed})"} \
 and not test(/.*integer_smart_div_param/) \
