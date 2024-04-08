@@ -320,22 +320,14 @@ macro_rules! define_comparison_test_functions {
             create_parametrized_test!([<integer_unchecked_ $comparison_name _ $clear_type:lower>]
             {
 
-                PARAM_MESSAGE_2_CARRY_2_KS_PBS,
-
-                PARAM_MESSAGE_3_CARRY_3_KS_PBS,
-
-                PARAM_MESSAGE_4_CARRY_4_KS_PBS,
+                PARAM_MESSAGE_2_CARRY_2_COMPACT_PK_KS_PBS_TUNIFORM_2M40,
                 #[cfg(tarpaulin)]
                 COVERAGE_PARAM_MESSAGE_2_CARRY_2_KS_PBS
             });
             create_parametrized_test!([<integer_unchecked_ $comparison_name _parallelized_ $clear_type:lower>]
             {
 
-                PARAM_MESSAGE_2_CARRY_2_KS_PBS,
-
-                PARAM_MESSAGE_3_CARRY_3_KS_PBS,
-
-                PARAM_MESSAGE_4_CARRY_4_KS_PBS,
+                PARAM_MESSAGE_2_CARRY_2_COMPACT_PK_KS_PBS_TUNIFORM_2M40,
                 #[cfg(tarpaulin)]
                 COVERAGE_PARAM_MESSAGE_2_CARRY_2_KS_PBS
             });
@@ -343,13 +335,7 @@ macro_rules! define_comparison_test_functions {
             create_parametrized_test!([<integer_smart_ $comparison_name _ $clear_type:lower>]
             {
 
-                PARAM_MESSAGE_2_CARRY_2_KS_PBS,
-                // We don't use PARAM_MESSAGE_3_CARRY_3_KS_PBS,
-                // as smart test might overflow values
-                // and when using 3_3 to represent 256 we actually have more than 256 bits
-                // of message so the overflow behaviour is not the same, leading to false negatives
-
-                PARAM_MESSAGE_4_CARRY_4_KS_PBS,
+PARAM_MESSAGE_2_CARRY_2_COMPACT_PK_KS_PBS_TUNIFORM_2M40,
                 #[cfg(tarpaulin)]
                 COVERAGE_PARAM_MESSAGE_2_CARRY_2_KS_PBS
             });
@@ -357,13 +343,7 @@ macro_rules! define_comparison_test_functions {
             create_parametrized_test!([<integer_smart_ $comparison_name _parallelized_ $clear_type:lower>]
             {
 
-                PARAM_MESSAGE_2_CARRY_2_KS_PBS,
-                // We don't use PARAM_MESSAGE_3_CARRY_3_KS_PBS,
-                // as smart test might overflow values
-                // and when using 3_3 to represent 256 we actually have more than 256 bits
-                // of message so the overflow behaviour is not the same, leading to false negatives
-
-                PARAM_MESSAGE_4_CARRY_4_KS_PBS,
+PARAM_MESSAGE_2_CARRY_2_COMPACT_PK_KS_PBS_TUNIFORM_2M40,
                 #[cfg(tarpaulin)]
                 COVERAGE_PARAM_MESSAGE_2_CARRY_2_KS_PBS
             });
@@ -657,34 +637,22 @@ mod no_coverage {
     }
 
     create_parametrized_test!(integer_unchecked_min_parallelized_u256 {
-        PARAM_MESSAGE_2_CARRY_2_KS_PBS,
-        PARAM_MESSAGE_3_CARRY_3_KS_PBS,
-        PARAM_MESSAGE_4_CARRY_4_KS_PBS
+PARAM_MESSAGE_2_CARRY_2_COMPACT_PK_KS_PBS_TUNIFORM_2M40
     });
     create_parametrized_test!(integer_unchecked_max_parallelized_u256 {
-        PARAM_MESSAGE_2_CARRY_2_KS_PBS,
-        PARAM_MESSAGE_3_CARRY_3_KS_PBS,
-        PARAM_MESSAGE_4_CARRY_4_KS_PBS
+PARAM_MESSAGE_2_CARRY_2_COMPACT_PK_KS_PBS_TUNIFORM_2M40
     });
     create_parametrized_test!(integer_smart_min_parallelized_u256 {
-        PARAM_MESSAGE_2_CARRY_2_KS_PBS,
-        // No test for 3_3, see define_comparison_test_functions macro
-        PARAM_MESSAGE_4_CARRY_4_KS_PBS
+PARAM_MESSAGE_2_CARRY_2_COMPACT_PK_KS_PBS_TUNIFORM_2M40
     });
     create_parametrized_test!(integer_smart_max_parallelized_u256 {
-        PARAM_MESSAGE_2_CARRY_2_KS_PBS,
-        // No test for 3_3, see define_comparison_test_functions macro
-        PARAM_MESSAGE_4_CARRY_4_KS_PBS
+PARAM_MESSAGE_2_CARRY_2_COMPACT_PK_KS_PBS_TUNIFORM_2M40
     });
     create_parametrized_test!(integer_min_parallelized_u256 {
-        PARAM_MESSAGE_2_CARRY_2_KS_PBS,
-        // No test for 3_3, see define_comparison_test_functions macro
-        PARAM_MESSAGE_4_CARRY_4_KS_PBS
+PARAM_MESSAGE_2_CARRY_2_COMPACT_PK_KS_PBS_TUNIFORM_2M40
     });
     create_parametrized_test!(integer_max_parallelized_u256 {
-        PARAM_MESSAGE_2_CARRY_2_KS_PBS,
-        // No test for 3_3, see define_comparison_test_functions macro
-        PARAM_MESSAGE_4_CARRY_4_KS_PBS
+PARAM_MESSAGE_2_CARRY_2_COMPACT_PK_KS_PBS_TUNIFORM_2M40
     });
 
     define_comparison_test_functions!(eq, U256);
