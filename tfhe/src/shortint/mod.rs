@@ -50,6 +50,7 @@
 pub mod ciphertext;
 pub mod client_key;
 pub mod engine;
+pub mod glwe_compression;
 pub mod key_switching_key;
 #[cfg(any(test, doctest, feature = "internal-keycache"))]
 pub mod keycache;
