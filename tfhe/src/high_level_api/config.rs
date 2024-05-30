@@ -29,6 +29,17 @@ impl ConfigBuilder {
         self
     }
 
+    pub fn enable_glwe_packing_compression(
+        mut self,
+        compression_parameters: CompressionParameters,
+    ) -> Self {
+        self.config
+            .inner
+            .enable_glwe_packing_compression(compression_parameters);
+
+        self
+    }
+
     /// Use default parameters with big encryption
     ///
     /// For more information see [crate::core_crypto::prelude::PBSOrder::KeyswitchBootstrap]

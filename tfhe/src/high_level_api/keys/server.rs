@@ -1,6 +1,9 @@
 #[cfg(feature = "gpu")]
 use crate::core_crypto::gpu::{synchronize_devices, CudaStreams};
 use crate::high_level_api::keys::{IntegerCompressedServerKey, IntegerServerKey};
+use crate::shortint::glwe_compression::{
+    GlweCompressionKey, GlweDecompressionKey, SeededGlweCompressionKey, SeededGlweDecompressionKey,
+};
 use std::sync::Arc;
 
 use super::ClientKey;
@@ -32,18 +35,32 @@ impl ServerKey {
     ) -> (
         crate::integer::ServerKey,
         Option<crate::integer::wopbs::WopbsKey>,
+        Option<GlweCompressionKey>,
+        Option<GlweDecompressionKey>,
     ) {
-        let IntegerServerKey { key, wopbs_key } = (*self.key).clone();
+        let IntegerServerKey {
+            key,
+            wopbs_key,
+            compression_key,
+            decompression_key,
+        } = (*self.key).clone();
 
-        (key, wopbs_key)
+        (key, wopbs_key, compression_key, decompression_key)
     }
 
     pub fn from_raw_parts(
         key: crate::integer::ServerKey,
         wopbs_key: Option<crate::integer::wopbs::WopbsKey>,
+        compression_key: Option<GlweCompressionKey>,
+        decompression_key: Option<GlweDecompressionKey>,
     ) -> Self {
         Self {
-            key: Arc::new(IntegerServerKey { key, wopbs_key }),
+            key: Arc::new(IntegerServerKey {
+                key,
+                wopbs_key,
+                compression_key,
+                decompression_key,
+            }),
         }
     }
 }
@@ -120,13 +137,21 @@ impl CompressedServerKey {
         }
     }
 
-    pub fn into_raw_parts(self) -> crate::integer::CompressedServerKey {
+    pub fn into_raw_parts(
+        self,
+    ) -> (
+        crate::integer::CompressedServerKey,
+        Option<(SeededGlweCompressionKey, SeededGlweDecompressionKey)>,
+    ) {
         self.integer_key.into_raw_parts()
     }
 
-    pub fn from_raw_parts(integer_key: crate::integer::CompressedServerKey) -> Self {
+    pub fn from_raw_parts(
+        integer_key: crate::integer::CompressedServerKey,
+        compression_keys: Option<(SeededGlweCompressionKey, SeededGlweDecompressionKey)>,
+    ) -> Self {
         Self {
-            integer_key: IntegerCompressedServerKey::from_raw_parts(integer_key),
+            integer_key: IntegerCompressedServerKey::from_raw_parts(integer_key, compression_keys),
         }
     }
 

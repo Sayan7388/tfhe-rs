@@ -5,6 +5,7 @@
 use super::{CompressedServerKey, ServerKey};
 use crate::high_level_api::config::Config;
 use crate::high_level_api::keys::IntegerClientKey;
+use crate::shortint::glwe_compression::GlweCompressionPrivateKeys;
 use crate::shortint::MessageModulus;
 use concrete_csprng::seeders::Seed;
 
@@ -66,6 +67,7 @@ impl ClientKey {
     ) -> (
         crate::integer::ClientKey,
         Option<crate::shortint::WopbsParameters>,
+        Option<GlweCompressionPrivateKeys>,
     ) {
         self.key.into_raw_parts()
     }
@@ -73,9 +75,10 @@ impl ClientKey {
     pub fn from_raw_parts(
         key: crate::integer::ClientKey,
         wopbs_block_parameters: Option<crate::shortint::WopbsParameters>,
+        compression_key: Option<GlweCompressionPrivateKeys>,
     ) -> Self {
         Self {
-            key: IntegerClientKey::from_raw_parts(key, wopbs_block_parameters),
+            key: IntegerClientKey::from_raw_parts(key, wopbs_block_parameters, compression_key),
         }
     }
 
