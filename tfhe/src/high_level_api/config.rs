@@ -1,4 +1,5 @@
 use crate::high_level_api::keys::IntegerConfig;
+use crate::shortint::glwe_compression::CompressionParameters;
 
 /// The config type
 #[derive(Copy, Clone, Debug, serde::Serialize, serde::Deserialize)]
@@ -53,13 +54,18 @@ impl ConfigBuilder {
     pub fn with_custom_parameters<P>(
         block_parameters: P,
         wopbs_block_parameters: Option<crate::shortint::WopbsParameters>,
+        compression_parameters: Option<CompressionParameters>,
     ) -> Self
     where
         P: Into<crate::shortint::PBSParameters>,
     {
         Self {
             config: Config {
-                inner: IntegerConfig::new(block_parameters.into(), wopbs_block_parameters),
+                inner: IntegerConfig::new(
+                    block_parameters.into(),
+                    wopbs_block_parameters,
+                    compression_parameters,
+                ),
             },
         }
     }
@@ -68,11 +74,16 @@ impl ConfigBuilder {
         mut self,
         block_parameters: P,
         wopbs_block_parameters: Option<crate::shortint::WopbsParameters>,
+        compression_parameters: Option<CompressionParameters>,
     ) -> Self
     where
         P: Into<crate::shortint::PBSParameters>,
     {
-        self.config.inner = IntegerConfig::new(block_parameters.into(), wopbs_block_parameters);
+        self.config.inner = IntegerConfig::new(
+            block_parameters.into(),
+            wopbs_block_parameters,
+            compression_parameters,
+        );
         self
     }
 

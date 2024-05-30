@@ -112,6 +112,7 @@ fn main() {
         //        PARAM_MULTI_BIT_MESSAGE_2_CARRY_2_GROUP_3_KS_PBS,
         PARAM_MESSAGE_2_CARRY_2_KS_PBS,
         None,
+        None,
     )
     .build();
     let cks = ClientKey::generate(config);

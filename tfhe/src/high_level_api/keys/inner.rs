@@ -2,25 +2,30 @@ use crate::core_crypto::commons::generators::DeterministicSeeder;
 use crate::core_crypto::prelude::ActivatedRandomGenerator;
 use crate::integer::public_key::CompactPublicKey;
 use crate::integer::CompressedCompactPublicKey;
+use crate::shortint::glwe_compression::CompressionParameters;
 use crate::shortint::{EncryptionKeyChoice, MessageModulus};
 use crate::Error;
 use concrete_csprng::seeders::Seed;
 use serde::{Deserialize, Serialize};
 
+#[allow(clippy::struct_field_names)]
 #[derive(Copy, Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub(crate) struct IntegerConfig {
     pub(crate) block_parameters: crate::shortint::PBSParameters,
     pub(crate) wopbs_block_parameters: Option<crate::shortint::WopbsParameters>,
+    pub(crate) compression_parameters: Option<CompressionParameters>,
 }
 
 impl IntegerConfig {
     pub(crate) fn new(
         block_parameters: crate::shortint::PBSParameters,
         wopbs_block_parameters: Option<crate::shortint::WopbsParameters>,
+        compression_parameters: Option<CompressionParameters>,
     ) -> Self {
         Self {
             block_parameters,
             wopbs_block_parameters,
+            compression_parameters,
         }
     }
 
@@ -28,6 +33,7 @@ impl IntegerConfig {
         Self {
             block_parameters: crate::shortint::parameters::PARAM_MESSAGE_2_CARRY_2_KS_PBS.into(),
             wopbs_block_parameters: None,
+            compression_parameters: None,
         }
     }
 
@@ -35,6 +41,7 @@ impl IntegerConfig {
         Self {
             block_parameters: crate::shortint::parameters::PARAM_MESSAGE_2_CARRY_2_PBS_KS.into(),
             wopbs_block_parameters: None,
+            compression_parameters: None,
         }
     }
 
