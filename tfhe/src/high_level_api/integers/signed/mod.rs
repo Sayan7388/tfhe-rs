@@ -2,7 +2,7 @@ mod base;
 mod compressed;
 
 mod encrypt;
-mod inner;
+pub(crate) mod inner;
 mod ops;
 mod overflowing_ops;
 mod scalar_ops;

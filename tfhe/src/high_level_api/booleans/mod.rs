@@ -4,6 +4,6 @@ pub use compressed::CompressedFheBool;
 mod base;
 mod compressed;
 mod encrypt;
-mod inner;
+pub(crate) mod inner;
 #[cfg(test)]
 mod tests;

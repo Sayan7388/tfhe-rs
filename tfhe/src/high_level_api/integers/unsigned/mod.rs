@@ -15,7 +15,7 @@ mod static_;
 mod wopbs;
 
 mod encrypt;
-mod inner;
+pub(crate) mod inner;
 mod ops;
 mod overflowing_ops;
 pub(crate) mod scalar_ops;
