@@ -3,6 +3,7 @@ mod array;
 pub mod booleans;
 mod compact_list;
 pub mod config;
+pub mod glwe_ct_list;
 pub mod i128;
 pub mod i256;
 pub mod integers;
