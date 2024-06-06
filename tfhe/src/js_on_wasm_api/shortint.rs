@@ -1,6 +1,7 @@
 use crate::core_crypto::commons::generators::DeterministicSeeder;
 use crate::core_crypto::commons::math::random::Seed;
 use crate::core_crypto::prelude::ActivatedRandomGenerator;
+use crate::shortint::parameters::classic::compact_pk::tuniform::p_fail_2_minus_64::pbs_ks::PARAM_MESSAGE_2_CARRY_2_COMPACT_PK_PBS_KS_TUNIFORM_2M64;
 use crate::shortint::parameters::classic::compact_pk::*;
 use crate::shortint::parameters::*;
 use std::panic::set_hook;
@@ -316,6 +317,8 @@ expose_predefined_parameters! {
     PARAM_MESSAGE_6_CARRY_1_COMPACT_PK_KS_PBS_TUNIFORM_2M40,
     PARAM_MESSAGE_6_CARRY_2_COMPACT_PK_KS_PBS_TUNIFORM_2M40,
     PARAM_MESSAGE_7_CARRY_1_COMPACT_PK_KS_PBS_TUNIFORM_2M40,
+    // CPK TUniform bench
+    PARAM_MESSAGE_2_CARRY_2_COMPACT_PK_PBS_KS_TUNIFORM_2M64,
     // Aliases to remove eventually
     PARAM_MESSAGE_1_CARRY_0,
     PARAM_MESSAGE_1_CARRY_1,
