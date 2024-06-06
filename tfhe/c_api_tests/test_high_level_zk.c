@@ -64,7 +64,7 @@ int main(void) {
     status = compact_ciphertext_list_builder_push_u2(builder, 3);
     assert(status == 0);
 
-    status = compact_ciphertext_list_builder_build_with_proof(builder, public_params,
+    status = compact_ciphertext_list_builder_build_with_proof_packed(builder, public_params,
                                                               ZkComputeLoadProof, &compact_list);
     assert(status == 0);
 

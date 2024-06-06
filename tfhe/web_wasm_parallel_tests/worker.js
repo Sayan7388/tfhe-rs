@@ -262,7 +262,7 @@ async function compactPublicKeyZeroKnowledge() {
 
     let builder = CompactCiphertextList.builder(publicKey);
     builder.push_u64(input);
-    let list = builder.build_with_proof(public_params, ZkComputeLoad.Proof);
+    let list = builder.build_with_proof_packed(public_params, ZkComputeLoad.Proof);
     let end = performance.now();
     console.log(
       "Time to encrypt + prove CompactFheUint64: ",
@@ -273,16 +273,7 @@ async function compactPublicKeyZeroKnowledge() {
     let bytes = list.serialize();
     console.log("CompactCiphertextList size:", bytes.length);
 
-    start = performance.now();
-    let expander = list.verify_and_expand(public_params, publicKey);
-    end = performance.now();
-    console.log(
-      "Time to verify + expand CompactFheUint64: ",
-      end - start,
-      " ms",
-    );
-
-    assert_eq(expander.get_uint64(0).decrypt(clientKey), input);
+    // We cannot expand a packed list in WASM
   }
 
   {
@@ -297,7 +288,7 @@ async function compactPublicKeyZeroKnowledge() {
     for (let input of inputs) {
       builder.push_u64(input);
     }
-    let encrypted = builder.build_with_proof(
+    let encrypted = builder.build_with_proof_packed(
       public_params,
       ZkComputeLoad.Proof,
     );
@@ -308,18 +299,7 @@ async function compactPublicKeyZeroKnowledge() {
       " ms",
     );
 
-    start = performance.now();
-    let expander = encrypted.verify_and_expand(public_params, publicKey);
-    end = performance.now();
-    console.log(
-      "Time to verify + expand CompactFheUint64: ",
-      end - start,
-      " ms",
-    );
-
-    for (let i = 0; i < inputs.length; i++) {
-      assert_eq(expander.get_uint64(i).decrypt(clientKey), inputs[i]);
-    }
+    // We cannot expand a packed list in WASM
   }
 }
 
