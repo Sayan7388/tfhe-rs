@@ -2,7 +2,7 @@
 mod utilities;
 
 use crate::utilities::{write_to_json, CryptoParametersRecord, OperatorType};
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{black_box, criterion_main, Criterion};
 use rayon::prelude::*;
 use serde::Serialize;
 use tfhe::boolean::parameters::{
@@ -42,32 +42,28 @@ const BOOLEAN_BENCH_PARAMS: [(&str, BooleanParameters); 2] = [
     ),
 ];
 
-fn benchmark_parameters<Scalar: UnsignedInteger>() -> Vec<(String, CryptoParametersRecord<Scalar>)>
-{
-    if Scalar::BITS == 64 {
-        SHORTINT_BENCH_PARAMS
-            .iter()
-            .map(|params| {
-                (
-                    params.name(),
-                    <ClassicPBSParameters as Into<PBSParameters>>::into(*params)
-                        .to_owned()
-                        .into(),
-                )
-            })
-            .collect()
-    } else if Scalar::BITS == 32 {
-        BOOLEAN_BENCH_PARAMS
-            .iter()
-            .map(|(name, params)| (name.to_string(), params.to_owned().into()))
-            .collect()
-    } else {
-        vec![]
-    }
+fn benchmark_parameters_64bits() -> Vec<(String, CryptoParametersRecord<u64>)> {
+    SHORTINT_BENCH_PARAMS
+        .iter()
+        .map(|params| {
+            (
+                params.name(),
+                <ClassicPBSParameters as Into<PBSParameters>>::into(*params)
+                    .to_owned()
+                    .into(),
+            )
+        })
+        .collect()
 }
 
-fn throughput_benchmark_parameters<Scalar: UnsignedInteger>(
-) -> Vec<(String, CryptoParametersRecord<Scalar>)> {
+fn benchmark_parameters_32bits() -> Vec<(String, CryptoParametersRecord<u32>)> {
+    BOOLEAN_BENCH_PARAMS
+        .iter()
+        .map(|(name, params)| (name.to_string(), params.to_owned().into()))
+        .collect()
+}
+
+fn throughput_benchmark_parameters_64bits() -> Vec<(String, CryptoParametersRecord<u64>)> {
     let parameters = if cfg!(feature = "gpu") {
         vec![
             PARAM_MESSAGE_1_CARRY_1_KS_PBS,
@@ -82,66 +78,63 @@ fn throughput_benchmark_parameters<Scalar: UnsignedInteger>(
             PARAM_MESSAGE_4_CARRY_4_KS_PBS,
         ]
     };
-    if Scalar::BITS == 64 {
-        parameters
-            .iter()
-            .map(|params| {
-                (
-                    params.name(),
-                    <ClassicPBSParameters as Into<PBSParameters>>::into(*params)
-                        .to_owned()
-                        .into(),
-                )
-            })
-            .collect()
-    } else if Scalar::BITS == 32 {
-        BOOLEAN_BENCH_PARAMS
-            .iter()
-            .map(|(name, params)| (name.to_string(), params.to_owned().into()))
-            .collect()
-    } else {
-        vec![]
-    }
+
+    parameters
+        .iter()
+        .map(|params| {
+            (
+                params.name(),
+                <ClassicPBSParameters as Into<PBSParameters>>::into(*params)
+                    .to_owned()
+                    .into(),
+            )
+        })
+        .collect()
 }
 
-fn multi_bit_benchmark_parameters<Scalar: UnsignedInteger + Default>(
-) -> Vec<(String, CryptoParametersRecord<Scalar>, LweBskGroupingFactor)> {
-    if Scalar::BITS == 64 {
-        let parameters = if cfg!(feature = "gpu") {
-            vec![
-                PARAM_GPU_MULTI_BIT_MESSAGE_1_CARRY_1_GROUP_3_KS_PBS,
-                PARAM_GPU_MULTI_BIT_MESSAGE_2_CARRY_2_GROUP_3_KS_PBS,
-            ]
-        } else {
-            vec![
-                PARAM_MULTI_BIT_MESSAGE_1_CARRY_1_GROUP_2_KS_PBS,
-                PARAM_MULTI_BIT_MESSAGE_2_CARRY_2_GROUP_2_KS_PBS,
-                PARAM_MULTI_BIT_MESSAGE_3_CARRY_3_GROUP_2_KS_PBS,
-                PARAM_MULTI_BIT_MESSAGE_1_CARRY_1_GROUP_3_KS_PBS,
-                PARAM_MULTI_BIT_MESSAGE_2_CARRY_2_GROUP_3_KS_PBS,
-                PARAM_MULTI_BIT_MESSAGE_3_CARRY_3_GROUP_3_KS_PBS,
-            ]
-        };
-
-        parameters
-            .iter()
-            .map(|params| {
-                (
-                    params.name(),
-                    <MultiBitPBSParameters as Into<PBSParameters>>::into(*params)
-                        .to_owned()
-                        .into(),
-                    params.grouping_factor,
-                )
-            })
-            .collect()
-    } else {
-        // For now there are no parameters available to test multi bit PBS on 32 bits.
-        vec![]
-    }
+fn throughput_benchmark_parameters_32bits() -> Vec<(String, CryptoParametersRecord<u32>)> {
+    BOOLEAN_BENCH_PARAMS
+        .iter()
+        .map(|(name, params)| (name.to_string(), params.to_owned().into()))
+        .collect()
 }
 
-fn mem_optimized_pbs<Scalar: UnsignedTorus + CastInto<usize> + Serialize>(c: &mut Criterion) {
+fn multi_bit_benchmark_parameters_64bits(
+) -> Vec<(String, CryptoParametersRecord<u64>, LweBskGroupingFactor)> {
+    let parameters = if cfg!(feature = "gpu") {
+        vec![
+            PARAM_GPU_MULTI_BIT_MESSAGE_1_CARRY_1_GROUP_3_KS_PBS,
+            PARAM_GPU_MULTI_BIT_MESSAGE_2_CARRY_2_GROUP_3_KS_PBS,
+        ]
+    } else {
+        vec![
+            PARAM_MULTI_BIT_MESSAGE_1_CARRY_1_GROUP_2_KS_PBS,
+            PARAM_MULTI_BIT_MESSAGE_2_CARRY_2_GROUP_2_KS_PBS,
+            PARAM_MULTI_BIT_MESSAGE_3_CARRY_3_GROUP_2_KS_PBS,
+            PARAM_MULTI_BIT_MESSAGE_1_CARRY_1_GROUP_3_KS_PBS,
+            PARAM_MULTI_BIT_MESSAGE_2_CARRY_2_GROUP_3_KS_PBS,
+            PARAM_MULTI_BIT_MESSAGE_3_CARRY_3_GROUP_3_KS_PBS,
+        ]
+    };
+
+    parameters
+        .iter()
+        .map(|params| {
+            (
+                params.name(),
+                <MultiBitPBSParameters as Into<PBSParameters>>::into(*params)
+                    .to_owned()
+                    .into(),
+                params.grouping_factor,
+            )
+        })
+        .collect()
+}
+
+fn mem_optimized_pbs<Scalar: UnsignedTorus + CastInto<usize> + Serialize>(
+    c: &mut Criterion,
+    parameters: &[(String, CryptoParametersRecord<Scalar>)],
+) {
     let bench_name = "core_crypto::pbs_mem_optimized";
     let mut bench_group = c.benchmark_group(bench_name);
     bench_group
@@ -156,7 +149,7 @@ fn mem_optimized_pbs<Scalar: UnsignedTorus + CastInto<usize> + Serialize>(c: &mu
     let mut secret_generator =
         SecretRandomGenerator::<ActivatedRandomGenerator>::new(seeder.seed());
 
-    for (name, params) in benchmark_parameters::<Scalar>().iter() {
+    for (name, params) in parameters.iter() {
         // Create the LweSecretKey
         let input_lwe_secret_key = allocate_and_generate_new_binary_lwe_secret_key(
             params.lwe_dimension.unwrap(),
@@ -179,15 +172,13 @@ fn mem_optimized_pbs<Scalar: UnsignedTorus + CastInto<usize> + Serialize>(c: &mu
             params.pbs_level.unwrap(),
         );
 
-        let lwe_noise_distribution =
-            DynamicDistribution::new_gaussian_from_std_dev(params.lwe_std_dev.unwrap());
-
         // Allocate a new LweCiphertext and encrypt our plaintext
         let lwe_ciphertext_in: LweCiphertextOwned<Scalar> = allocate_and_encrypt_new_lwe_ciphertext(
             &input_lwe_secret_key,
             Plaintext(Scalar::ZERO),
-            lwe_noise_distribution,
-            tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+            params.lwe_noise_distribution.unwrap(),
+            params.ciphertext_modulus.unwrap(), /* TODO Remplacer en utilisant celui du
+                                                 * CryptoParametersRecord */
             &mut encryption_generator,
         );
 
@@ -195,14 +186,14 @@ fn mem_optimized_pbs<Scalar: UnsignedTorus + CastInto<usize> + Serialize>(c: &mu
             Scalar::ZERO,
             params.glwe_dimension.unwrap().to_glwe_size(),
             params.polynomial_size.unwrap(),
-            tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+            params.ciphertext_modulus.unwrap(),
         );
 
         // Allocate the LweCiphertext to store the result of the PBS
         let mut out_pbs_ct = LweCiphertext::new(
             Scalar::ZERO,
             output_lwe_secret_key.lwe_dimension().to_lwe_size(),
-            tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+            params.ciphertext_modulus.unwrap(),
         );
 
         let mut buffers = ComputationBuffers::new();
@@ -240,7 +231,7 @@ fn mem_optimized_pbs<Scalar: UnsignedTorus + CastInto<usize> + Serialize>(c: &mu
         let bit_size = (params.message_modulus.unwrap_or(2) as u32).ilog2();
         write_to_json(
             &id,
-            *params,
+            params.clone(),
             name,
             "pbs",
             &OperatorType::Atomic,
@@ -254,6 +245,7 @@ fn multi_bit_pbs<
     Scalar: UnsignedTorus + CastInto<usize> + CastFrom<usize> + Default + Sync + Serialize,
 >(
     c: &mut Criterion,
+    parameters: &[(String, CryptoParametersRecord<Scalar>, LweBskGroupingFactor)],
 ) {
     let bench_name = "core_crypto::multi_bit_pbs";
     let mut bench_group = c.benchmark_group(bench_name);
@@ -269,7 +261,7 @@ fn multi_bit_pbs<
     let mut secret_generator =
         SecretRandomGenerator::<ActivatedRandomGenerator>::new(seeder.seed());
 
-    for (name, params, grouping_factor) in multi_bit_benchmark_parameters::<Scalar>().iter() {
+    for (name, params, grouping_factor) in parameters.iter() {
         // Create the LweSecretKey
         let input_lwe_secret_key = allocate_and_generate_new_binary_lwe_secret_key(
             params.lwe_dimension.unwrap(),
@@ -292,15 +284,12 @@ fn multi_bit_pbs<
             *grouping_factor,
         );
 
-        let lwe_noise_distribution =
-            DynamicDistribution::new_gaussian_from_std_dev(params.lwe_std_dev.unwrap());
-
         // Allocate a new LweCiphertext and encrypt our plaintext
         let lwe_ciphertext_in = allocate_and_encrypt_new_lwe_ciphertext(
             &input_lwe_secret_key,
             Plaintext(Scalar::ZERO),
-            lwe_noise_distribution,
-            tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+            params.lwe_noise_distribution.unwrap(),
+            params.ciphertext_modulus.unwrap(),
             &mut encryption_generator,
         );
 
@@ -308,14 +297,14 @@ fn multi_bit_pbs<
             Scalar::ZERO,
             params.glwe_dimension.unwrap().to_glwe_size(),
             params.polynomial_size.unwrap(),
-            tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+            params.ciphertext_modulus.unwrap(),
         );
 
         // Allocate the LweCiphertext to store the result of the PBS
         let mut out_pbs_ct = LweCiphertext::new(
             Scalar::ZERO,
             output_lwe_secret_key.lwe_dimension().to_lwe_size(),
-            tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+            params.ciphertext_modulus.unwrap(),
         );
 
         let id = format!("{bench_name}::{name}::parallelized");
@@ -336,7 +325,7 @@ fn multi_bit_pbs<
         let bit_size = params.message_modulus.unwrap().ilog2();
         write_to_json(
             &id,
-            *params,
+            params.clone(),
             name,
             "pbs",
             &OperatorType::Atomic,
@@ -350,6 +339,7 @@ fn multi_bit_deterministic_pbs<
     Scalar: UnsignedTorus + CastInto<usize> + CastFrom<usize> + Default + Serialize + Sync,
 >(
     c: &mut Criterion,
+    parameters: &[(String, CryptoParametersRecord<Scalar>, LweBskGroupingFactor)],
 ) {
     let bench_name = "core_crypto::multi_bit_deterministic_pbs";
     let mut bench_group = c.benchmark_group(bench_name);
@@ -365,7 +355,7 @@ fn multi_bit_deterministic_pbs<
     let mut secret_generator =
         SecretRandomGenerator::<ActivatedRandomGenerator>::new(seeder.seed());
 
-    for (name, params, grouping_factor) in multi_bit_benchmark_parameters::<Scalar>().iter() {
+    for (name, params, grouping_factor) in parameters.iter() {
         // Create the LweSecretKey
         let input_lwe_secret_key = allocate_and_generate_new_binary_lwe_secret_key(
             params.lwe_dimension.unwrap(),
@@ -388,15 +378,12 @@ fn multi_bit_deterministic_pbs<
             *grouping_factor,
         );
 
-        let lwe_noise_distribution =
-            DynamicDistribution::new_gaussian_from_std_dev(params.lwe_std_dev.unwrap());
-
         // Allocate a new LweCiphertext and encrypt our plaintext
         let lwe_ciphertext_in = allocate_and_encrypt_new_lwe_ciphertext(
             &input_lwe_secret_key,
             Plaintext(Scalar::ZERO),
-            lwe_noise_distribution,
-            tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+            params.lwe_noise_distribution.unwrap(),
+            params.ciphertext_modulus.unwrap(),
             &mut encryption_generator,
         );
 
@@ -404,14 +391,14 @@ fn multi_bit_deterministic_pbs<
             Scalar::ZERO,
             params.glwe_dimension.unwrap().to_glwe_size(),
             params.polynomial_size.unwrap(),
-            tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+            params.ciphertext_modulus.unwrap(),
         );
 
         // Allocate the LweCiphertext to store the result of the PBS
         let mut out_pbs_ct = LweCiphertext::new(
             Scalar::ZERO,
             output_lwe_secret_key.lwe_dimension().to_lwe_size(),
-            tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+            params.ciphertext_modulus.unwrap(),
         );
 
         let id = format!("{bench_name}::{name}::parallelized");
@@ -432,7 +419,7 @@ fn multi_bit_deterministic_pbs<
         let bit_size = params.message_modulus.unwrap().ilog2();
         write_to_json(
             &id,
-            *params,
+            params.clone(),
             name,
             "pbs",
             &OperatorType::Atomic,
@@ -444,6 +431,7 @@ fn multi_bit_deterministic_pbs<
 
 fn pbs_throughput<Scalar: UnsignedTorus + CastInto<usize> + Sync + Send + Serialize>(
     c: &mut Criterion,
+    parameters: &[(String, CryptoParametersRecord<Scalar>)],
 ) {
     let bench_name = "core_crypto::pbs_throughput";
     let mut bench_group = c.benchmark_group(bench_name);
@@ -459,7 +447,7 @@ fn pbs_throughput<Scalar: UnsignedTorus + CastInto<usize> + Sync + Send + Serial
     let mut secret_generator =
         SecretRandomGenerator::<ActivatedRandomGenerator>::new(seeder.seed());
 
-    for (name, params) in throughput_benchmark_parameters::<Scalar>().iter() {
+    for (name, params) in parameters.iter() {
         let input_lwe_secret_key = allocate_and_generate_new_binary_lwe_secret_key(
             params.lwe_dimension.unwrap(),
             &mut secret_generator,
@@ -473,17 +461,14 @@ fn pbs_throughput<Scalar: UnsignedTorus + CastInto<usize> + Sync + Send + Serial
         let big_lwe_sk = glwe_secret_key.into_lwe_secret_key();
         let big_lwe_dimension = big_lwe_sk.lwe_dimension();
 
-        let lwe_noise_distribution =
-            DynamicDistribution::new_gaussian_from_std_dev(params.lwe_std_dev.unwrap());
-
         const NUM_CTS: usize = 8192;
         let lwe_vec: Vec<_> = (0..NUM_CTS)
             .map(|_| {
                 allocate_and_encrypt_new_lwe_ciphertext(
                     &input_lwe_secret_key,
                     Plaintext(Scalar::ZERO),
-                    lwe_noise_distribution,
-                    tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+                    params.lwe_noise_distribution.unwrap(),
+                    params.ciphertext_modulus.unwrap(),
                     &mut encryption_generator,
                 )
             })
@@ -558,7 +543,7 @@ fn pbs_throughput<Scalar: UnsignedTorus + CastInto<usize> + Sync + Send + Serial
             let bit_size = (params.message_modulus.unwrap_or(2) as u32).ilog2();
             write_to_json(
                 &id,
-                *params,
+                params.clone(),
                 name,
                 "pbs",
                 &OperatorType::Atomic,
@@ -571,7 +556,11 @@ fn pbs_throughput<Scalar: UnsignedTorus + CastInto<usize> + Sync + Send + Serial
 
 #[cfg(feature = "gpu")]
 mod cuda {
-    use super::{multi_bit_benchmark_parameters, throughput_benchmark_parameters};
+    use super::{
+        benchmark_parameters_32bits, benchmark_parameters_64bits, mem_optimized_pbs,
+        multi_bit_benchmark_parameters_64bits, multi_bit_deterministic_pbs, multi_bit_pbs,
+        pbs_throughput, throughput_benchmark_parameters_64bits,
+    };
     use crate::utilities::{write_to_json, CryptoParametersRecord, OperatorType};
     use criterion::{black_box, criterion_group, Criterion};
     use serde::Serialize;
@@ -613,26 +602,24 @@ mod cuda {
         PARAM_MESSAGE_7_CARRY_0_KS_PBS,
     ];
 
-    fn cuda_benchmark_parameters<Scalar: UnsignedInteger>(
-    ) -> Vec<(String, CryptoParametersRecord<Scalar>)> {
-        if Scalar::BITS == 64 {
-            SHORTINT_CUDA_BENCH_PARAMS
-                .iter()
-                .map(|params| {
-                    (
-                        params.name(),
-                        <ClassicPBSParameters as Into<PBSParameters>>::into(*params)
-                            .to_owned()
-                            .into(),
-                    )
-                })
-                .collect()
-        } else {
-            vec![]
-        }
+    fn cuda_benchmark_parameters_64bits() -> Vec<(String, CryptoParametersRecord<u64>)> {
+        SHORTINT_CUDA_BENCH_PARAMS
+            .iter()
+            .map(|params| {
+                (
+                    params.name(),
+                    <ClassicPBSParameters as Into<PBSParameters>>::into(*params)
+                        .to_owned()
+                        .into(),
+                )
+            })
+            .collect()
     }
 
-    fn cuda_pbs<Scalar: UnsignedTorus + CastInto<usize> + Serialize>(c: &mut Criterion) {
+    fn cuda_pbs<Scalar: UnsignedTorus + CastInto<usize> + Serialize>(
+        c: &mut Criterion,
+        parameters: &[(String, CryptoParametersRecord<Scalar>)],
+    ) {
         let bench_name = "core_crypto::cuda::pbs";
         let mut bench_group = c.benchmark_group(bench_name);
         bench_group
@@ -650,7 +637,7 @@ mod cuda {
         let gpu_index = 0;
         let stream = CudaStreams::new_single_gpu(gpu_index);
 
-        for (name, params) in cuda_benchmark_parameters::<Scalar>().iter() {
+        for (name, params) in parameters.iter() {
             // Create the LweSecretKey
             let input_lwe_secret_key = allocate_and_generate_new_binary_lwe_secret_key(
                 params.lwe_dimension.unwrap(),
@@ -671,19 +658,16 @@ mod cuda {
                 params.pbs_base_log.unwrap(),
                 params.pbs_level.unwrap(),
                 params.lwe_dimension.unwrap(),
-                tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+                params.ciphertext_modulus.unwrap(),
             );
             let bsk_gpu = CudaLweBootstrapKey::from_lwe_bootstrap_key(&bsk, &stream);
-
-            let lwe_noise_distribution =
-                DynamicDistribution::new_gaussian_from_std_dev(params.lwe_std_dev.unwrap());
 
             // Allocate a new LweCiphertext and encrypt our plaintext
             let lwe_ciphertext_in = allocate_and_encrypt_new_lwe_ciphertext(
                 &input_lwe_secret_key,
                 Plaintext(Scalar::ZERO),
-                lwe_noise_distribution,
-                tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+                params.lwe_noise_distribution.unwrap(),
+                params.ciphertext_modulus.unwrap(),
                 &mut encryption_generator,
             );
             let lwe_ciphertext_in_gpu =
@@ -693,7 +677,7 @@ mod cuda {
                 Scalar::ZERO,
                 params.glwe_dimension.unwrap().to_glwe_size(),
                 params.polynomial_size.unwrap(),
-                tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+                params.ciphertext_modulus.unwrap(),
             );
             let accumulator_gpu =
                 CudaGlweCiphertextList::from_glwe_ciphertext(&accumulator, &stream);
@@ -702,7 +686,7 @@ mod cuda {
             let out_pbs_ct = LweCiphertext::new(
                 Scalar::ZERO,
                 output_lwe_secret_key.lwe_dimension().to_lwe_size(),
-                tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+                params.ciphertext_modulus.unwrap(),
             );
             let mut out_pbs_ct_gpu =
                 CudaLweCiphertextList::from_lwe_ciphertext(&out_pbs_ct, &stream);
@@ -741,7 +725,7 @@ mod cuda {
             let bit_size = (params.message_modulus.unwrap_or(2) as u32).ilog2();
             write_to_json(
                 &id,
-                *params,
+                params.clone(),
                 name,
                 "pbs",
                 &OperatorType::Atomic,
@@ -752,9 +736,11 @@ mod cuda {
     }
 
     fn cuda_multi_bit_pbs<
+        'a,
         Scalar: UnsignedTorus + CastInto<usize> + CastFrom<usize> + Default + Serialize + Sync,
     >(
         c: &mut Criterion,
+        parameters: &[(String, CryptoParametersRecord<Scalar>, LweBskGroupingFactor)],
     ) {
         let bench_name = "core_crypto::cuda::multi_bit_pbs";
         let mut bench_group = c.benchmark_group(bench_name);
@@ -773,7 +759,7 @@ mod cuda {
         let gpu_index = 0;
         let stream = CudaStreams::new_single_gpu(gpu_index);
 
-        for (name, params, grouping_factor) in multi_bit_benchmark_parameters::<Scalar>().iter() {
+        for (name, params, grouping_factor) in parameters.iter() {
             // Create the LweSecretKey
             let input_lwe_secret_key = allocate_and_generate_new_binary_lwe_secret_key(
                 params.lwe_dimension.unwrap(),
@@ -795,22 +781,19 @@ mod cuda {
                 params.pbs_level.unwrap(),
                 params.lwe_dimension.unwrap(),
                 *grouping_factor,
-                tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+                params.ciphertext_modulus.unwrap(),
             );
             let multi_bit_bsk_gpu = CudaLweMultiBitBootstrapKey::from_lwe_multi_bit_bootstrap_key(
                 &multi_bit_bsk,
                 &stream,
             );
 
-            let lwe_noise_distribution =
-                DynamicDistribution::new_gaussian_from_std_dev(params.lwe_std_dev.unwrap());
-
             // Allocate a new LweCiphertext and encrypt our plaintext
             let lwe_ciphertext_in = allocate_and_encrypt_new_lwe_ciphertext(
                 &input_lwe_secret_key,
                 Plaintext(Scalar::ZERO),
-                lwe_noise_distribution,
-                tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+                params.lwe_noise_distribution.unwrap(),
+                params.ciphertext_modulus.unwrap(),
                 &mut encryption_generator,
             );
             let lwe_ciphertext_in_gpu =
@@ -820,7 +803,7 @@ mod cuda {
                 Scalar::ZERO,
                 params.glwe_dimension.unwrap().to_glwe_size(),
                 params.polynomial_size.unwrap(),
-                tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+                params.ciphertext_modulus.unwrap(),
             );
             let accumulator_gpu =
                 CudaGlweCiphertextList::from_glwe_ciphertext(&accumulator, &stream);
@@ -829,7 +812,7 @@ mod cuda {
             let out_pbs_ct = LweCiphertext::new(
                 Scalar::ZERO,
                 output_lwe_secret_key.lwe_dimension().to_lwe_size(),
-                tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+                params.ciphertext_modulus.unwrap(),
             );
             let mut out_pbs_ct_gpu =
                 CudaLweCiphertextList::from_lwe_ciphertext(&out_pbs_ct, &stream);
@@ -865,7 +848,7 @@ mod cuda {
             let bit_size = params.message_modulus.unwrap().ilog2();
             write_to_json(
                 &id,
-                *params,
+                params.clone(),
                 name,
                 "pbs",
                 &OperatorType::Atomic,
@@ -876,9 +859,11 @@ mod cuda {
     }
 
     fn cuda_pbs_throughput<
+        'a,
         Scalar: UnsignedTorus + CastInto<usize> + CastFrom<usize> + Default + Serialize + Sync,
     >(
         c: &mut Criterion,
+        parameters: &[(String, CryptoParametersRecord<Scalar>)],
     ) {
         let bench_name = "core_crypto::cuda::pbs_throughput";
         let mut bench_group = c.benchmark_group(bench_name);
@@ -897,7 +882,7 @@ mod cuda {
         let gpu_index = 0;
         let stream = CudaStreams::new_single_gpu(gpu_index);
 
-        for (name, params) in throughput_benchmark_parameters::<Scalar>().iter() {
+        for (name, params) in parameters.iter() {
             let input_lwe_secret_key = allocate_and_generate_new_binary_lwe_secret_key(
                 params.lwe_dimension.unwrap(),
                 &mut secret_generator,
@@ -917,26 +902,24 @@ mod cuda {
                 params.pbs_base_log.unwrap(),
                 params.pbs_level.unwrap(),
                 params.lwe_dimension.unwrap(),
-                tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+                params.ciphertext_modulus.unwrap(),
             );
             let bsk_gpu = CudaLweBootstrapKey::from_lwe_bootstrap_key(&bsk, &stream);
 
             const NUM_CTS: usize = 8192;
             let plaintext_list = PlaintextList::new(Scalar::ZERO, PlaintextCount(NUM_CTS));
-            let lwe_noise_distribution =
-                DynamicDistribution::new_gaussian_from_std_dev(params.lwe_std_dev.unwrap());
 
             let mut lwe_list = LweCiphertextList::new(
                 Scalar::ZERO,
                 params.lwe_dimension.unwrap().to_lwe_size(),
                 LweCiphertextCount(NUM_CTS),
-                tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+                params.ciphertext_modulus.unwrap(),
             );
             encrypt_lwe_ciphertext_list(
                 &input_lwe_secret_key,
                 &mut lwe_list,
                 &plaintext_list,
-                lwe_noise_distribution,
+                params.lwe_noise_distribution.unwrap(),
                 &mut encryption_generator,
             );
             let underlying_container: Vec<Scalar> = lwe_list.into_container();
@@ -960,7 +943,7 @@ mod cuda {
                 Scalar::ZERO,
                 params.glwe_dimension.unwrap().to_glwe_size(),
                 params.polynomial_size.unwrap(),
-                tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+                params.ciphertext_modulus.unwrap(),
             );
             let accumulator_gpu =
                 CudaGlweCiphertextList::from_glwe_ciphertext(&accumulator, &stream);
@@ -1006,7 +989,7 @@ mod cuda {
             let bit_size = params.message_modulus.unwrap().ilog2();
             write_to_json(
                 &id,
-                *params,
+                params.clone(),
                 name,
                 "pbs",
                 &OperatorType::Atomic,
@@ -1017,9 +1000,11 @@ mod cuda {
     }
 
     fn cuda_multi_bit_pbs_throughput<
+        'a,
         Scalar: UnsignedTorus + CastInto<usize> + CastFrom<usize> + Default + Serialize + Sync,
     >(
         c: &mut Criterion,
+        parameters: &[(String, CryptoParametersRecord<Scalar>, LweBskGroupingFactor)],
     ) {
         let bench_name = "core_crypto::cuda::multi_bit_pbs_throughput";
         let mut bench_group = c.benchmark_group(bench_name);
@@ -1038,7 +1023,7 @@ mod cuda {
         let gpu_index = 0;
         let stream = CudaStreams::new_single_gpu(gpu_index);
 
-        for (name, params, grouping_factor) in multi_bit_benchmark_parameters::<Scalar>().iter() {
+        for (name, params, grouping_factor) in parameters.iter() {
             let input_lwe_secret_key = allocate_and_generate_new_binary_lwe_secret_key(
                 params.lwe_dimension.unwrap(),
                 &mut secret_generator,
@@ -1059,7 +1044,7 @@ mod cuda {
                 params.pbs_level.unwrap(),
                 params.lwe_dimension.unwrap(),
                 *grouping_factor,
-                tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+                params.ciphertext_modulus.unwrap(),
             );
             let multi_bit_bsk_gpu = CudaLweMultiBitBootstrapKey::from_lwe_multi_bit_bootstrap_key(
                 &multi_bit_bsk,
@@ -1067,21 +1052,19 @@ mod cuda {
             );
 
             const NUM_CTS: usize = 8192;
-            let lwe_noise_distribution =
-                DynamicDistribution::new_gaussian_from_std_dev(params.lwe_std_dev.unwrap());
 
             let plaintext_list = PlaintextList::new(Scalar::ZERO, PlaintextCount(NUM_CTS));
             let mut lwe_list = LweCiphertextList::new(
                 Scalar::ZERO,
                 params.lwe_dimension.unwrap().to_lwe_size(),
                 LweCiphertextCount(NUM_CTS),
-                tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+                params.ciphertext_modulus.unwrap(),
             );
             encrypt_lwe_ciphertext_list(
                 &input_lwe_secret_key,
                 &mut lwe_list,
                 &plaintext_list,
-                lwe_noise_distribution,
+                params.lwe_noise_distribution.unwrap(),
                 &mut encryption_generator,
             );
             let underlying_container: Vec<Scalar> = lwe_list.into_container();
@@ -1105,7 +1088,7 @@ mod cuda {
                 Scalar::ZERO,
                 params.glwe_dimension.unwrap().to_glwe_size(),
                 params.polynomial_size.unwrap(),
-                tfhe::core_crypto::prelude::CiphertextModulus::new_native(),
+                params.ciphertext_modulus.unwrap(),
             );
             let accumulator_gpu =
                 CudaGlweCiphertextList::from_glwe_ciphertext(&accumulator, &stream);
@@ -1150,7 +1133,7 @@ mod cuda {
             let bit_size = params.message_modulus.unwrap().ilog2();
             write_to_json(
                 &id,
-                *params,
+                params.clone(),
                 name,
                 "pbs",
                 &OperatorType::Atomic,
@@ -1160,16 +1143,25 @@ mod cuda {
         }
     }
 
-    criterion_group!(cuda_pbs_group, cuda_pbs::<u64>);
+    pub fn cuda_pbs_group() {
+        let mut criterion: Criterion<_> = (Criterion::default()).configure_from_args();
+        cuda_pbs(&mut criterion, &cuda_benchmark_parameters_64bits());
+    }
 
-    criterion_group!(cuda_multi_bit_pbs_group, cuda_multi_bit_pbs::<u64>);
+    pub fn cuda_pbs_throughput_group() {
+        let mut criterion: Criterion<_> = (Criterion::default()).configure_from_args();
+        cuda_pbs_throughput(&mut criterion, &throughput_benchmark_parameters_64bits());
+    }
 
-    criterion_group!(cuda_pbs_throughput_group, cuda_pbs_throughput::<u64>);
+    pub fn cuda_multi_bit_pbs_group() {
+        let mut criterion: Criterion<_> = (Criterion::default()).configure_from_args();
+        cuda_multi_bit_pbs(&mut criterion, &multi_bit_benchmark_parameters_64bits());
+    }
 
-    criterion_group!(
-        cuda_multi_bit_pbs_throughput_group,
-        cuda_multi_bit_pbs_throughput::<u64>
-    );
+    pub fn cuda_multi_bit_pbs_throughput_group() {
+        let mut criterion: Criterion<_> = (Criterion::default()).configure_from_args();
+        cuda_multi_bit_pbs_throughput(&mut criterion, &multi_bit_benchmark_parameters_64bits());
+    }
 }
 
 #[cfg(feature = "gpu")]
@@ -1178,25 +1170,23 @@ use cuda::{
     cuda_pbs_throughput_group,
 };
 
-criterion_group!(
-    pbs_group,
-    mem_optimized_pbs::<u64>,
-    mem_optimized_pbs::<u32>
-);
+pub fn pbs_group() {
+    let mut criterion: Criterion<_> = (Criterion::default()).configure_from_args();
+    mem_optimized_pbs(&mut criterion, &benchmark_parameters_64bits());
+    mem_optimized_pbs(&mut criterion, &benchmark_parameters_32bits());
+}
 
-criterion_group!(
-    multi_bit_pbs_group,
-    multi_bit_pbs::<u64>,
-    multi_bit_pbs::<u32>,
-    multi_bit_deterministic_pbs::<u64>,
-    multi_bit_deterministic_pbs::<u32>,
-);
+pub fn multi_bit_pbs_group() {
+    let mut criterion: Criterion<_> = (Criterion::default()).configure_from_args();
+    multi_bit_pbs(&mut criterion, &multi_bit_benchmark_parameters_64bits());
+    multi_bit_deterministic_pbs(&mut criterion, &multi_bit_benchmark_parameters_64bits());
+}
 
-criterion_group!(
-    pbs_throughput_group,
-    pbs_throughput::<u64>,
-    pbs_throughput::<u32>
-);
+pub fn pbs_throughput_group() {
+    let mut criterion: Criterion<_> = (Criterion::default()).configure_from_args();
+    pbs_throughput(&mut criterion, &throughput_benchmark_parameters_64bits());
+    pbs_throughput(&mut criterion, &throughput_benchmark_parameters_32bits());
+}
 
 #[cfg(not(feature = "gpu"))]
 criterion_main!(pbs_group, multi_bit_pbs_group, pbs_throughput_group);

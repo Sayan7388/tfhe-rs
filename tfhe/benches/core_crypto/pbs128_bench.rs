@@ -138,6 +138,12 @@ fn pbs_128(c: &mut Criterion) {
         lwe_dimension: Some(lwe_dimension),
         glwe_dimension: Some(glwe_dimension),
         polynomial_size: Some(polynomial_size),
+        lwe_noise_distribution_str: Some(CryptoParametersRecord::noise_distribution_as_str(
+            lwe_noise_distribution,
+        )),
+        glwe_noise_distribution_str: Some(CryptoParametersRecord::noise_distribution_as_str(
+            glwe_noise_distribution,
+        )),
         pbs_base_log: Some(pbs_base_log),
         pbs_level: Some(pbs_level),
         ciphertext_modulus: Some(ciphertext_modulus),

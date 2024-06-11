@@ -9,13 +9,21 @@ use tfhe::shortint::parameters::ShortintKeySwitchingParameters;
 #[cfg(feature = "shortint")]
 use tfhe::shortint::PBSParameters;
 
-#[derive(Clone, Copy, Default, Serialize)]
+#[derive(Clone, Default, Serialize)]
 pub struct CryptoParametersRecord<Scalar: UnsignedInteger> {
     pub lwe_dimension: Option<LweDimension>,
     pub glwe_dimension: Option<GlweDimension>,
     pub polynomial_size: Option<PolynomialSize>,
-    pub lwe_std_dev: Option<StandardDev>,
-    pub glwe_std_dev: Option<StandardDev>,
+    #[allow(dead_code)]
+    #[serde(skip_serializing)]
+    pub lwe_noise_distribution: Option<DynamicDistribution<Scalar>>,
+    // Since noise distribution is an enum with completely different types,
+    // a String representation of the distribution is easier to use as metadata in database.
+    pub lwe_noise_distribution_str: Option<String>,
+    #[allow(dead_code)]
+    #[serde(skip_serializing)]
+    pub glwe_noise_distribution: Option<DynamicDistribution<Scalar>>,
+    pub glwe_noise_distribution_str: Option<String>,
     pub pbs_base_log: Option<DecompositionBaseLog>,
     pub pbs_level: Option<DecompositionLevelCount>,
     pub ks_base_log: Option<DecompositionBaseLog>,
@@ -31,51 +39,49 @@ pub struct CryptoParametersRecord<Scalar: UnsignedInteger> {
 }
 
 #[cfg(feature = "boolean")]
-impl<Scalar: UnsignedInteger> From<BooleanParameters> for CryptoParametersRecord<Scalar> {
+impl From<BooleanParameters> for CryptoParametersRecord<u32> {
     fn from(params: BooleanParameters) -> Self {
         CryptoParametersRecord {
             lwe_dimension: Some(params.lwe_dimension),
             glwe_dimension: Some(params.glwe_dimension),
             polynomial_size: Some(params.polynomial_size),
-            lwe_std_dev: Some(params.lwe_noise_distribution.gaussian_std_dev()),
-            glwe_std_dev: Some(params.glwe_noise_distribution.gaussian_std_dev()),
+            lwe_noise_distribution: Some(params.lwe_noise_distribution),
+            lwe_noise_distribution_str: Some(Self::noise_distribution_as_str(
+                params.lwe_noise_distribution,
+            )),
+            glwe_noise_distribution: Some(params.glwe_noise_distribution),
+            glwe_noise_distribution_str: Some(Self::noise_distribution_as_str(
+                params.glwe_noise_distribution,
+            )),
             pbs_base_log: Some(params.pbs_base_log),
             pbs_level: Some(params.pbs_level),
             ks_base_log: Some(params.ks_base_log),
             ks_level: Some(params.ks_level),
-            pfks_level: None,
-            pfks_base_log: None,
-            pfks_std_dev: None,
-            cbs_level: None,
-            cbs_base_log: None,
-            message_modulus: None,
-            carry_modulus: None,
-            ciphertext_modulus: Some(CiphertextModulus::<Scalar>::new_native()),
+            ciphertext_modulus: Some(CiphertextModulus::<u32>::new_native()),
+            ..Default::default()
         }
     }
 }
 
 #[cfg(feature = "shortint")]
-impl<Scalar> From<PBSParameters> for CryptoParametersRecord<Scalar>
-where
-    Scalar: UnsignedInteger + CastInto<u128>,
-{
+impl From<PBSParameters> for CryptoParametersRecord<u64> {
     fn from(params: PBSParameters) -> Self {
         CryptoParametersRecord {
             lwe_dimension: Some(params.lwe_dimension()),
             glwe_dimension: Some(params.glwe_dimension()),
             polynomial_size: Some(params.polynomial_size()),
-            lwe_std_dev: Some(params.lwe_noise_distribution().gaussian_std_dev()),
-            glwe_std_dev: Some(params.glwe_noise_distribution().gaussian_std_dev()),
+            lwe_noise_distribution: Some(params.lwe_noise_distribution()),
+            lwe_noise_distribution_str: Some(Self::noise_distribution_as_str(
+                params.lwe_noise_distribution(),
+            )),
+            glwe_noise_distribution: Some(params.glwe_noise_distribution()),
+            glwe_noise_distribution_str: Some(Self::noise_distribution_as_str(
+                params.glwe_noise_distribution(),
+            )),
             pbs_base_log: Some(params.pbs_base_log()),
             pbs_level: Some(params.pbs_level()),
             ks_base_log: Some(params.ks_base_log()),
             ks_level: Some(params.ks_level()),
-            pfks_level: None,
-            pfks_base_log: None,
-            pfks_std_dev: None,
-            cbs_level: None,
-            cbs_base_log: None,
             message_modulus: Some(params.message_modulus().0),
             carry_modulus: Some(params.carry_modulus().0),
             ciphertext_modulus: Some(
@@ -84,33 +90,26 @@ where
                     .try_to()
                     .expect("failed to convert ciphertext modulus"),
             ),
+            ..Default::default()
         }
     }
 }
 
 #[cfg(feature = "shortint")]
-impl<Scalar: UnsignedInteger> From<ShortintKeySwitchingParameters>
-    for CryptoParametersRecord<Scalar>
-{
+impl From<ShortintKeySwitchingParameters> for CryptoParametersRecord<u64> {
     fn from(params: ShortintKeySwitchingParameters) -> Self {
         CryptoParametersRecord {
-            lwe_dimension: None,
-            glwe_dimension: None,
-            polynomial_size: None,
-            lwe_std_dev: None,
-            glwe_std_dev: None,
-            pbs_base_log: None,
-            pbs_level: None,
             ks_base_log: Some(params.ks_base_log),
             ks_level: Some(params.ks_level),
-            pfks_level: None,
-            pfks_base_log: None,
-            pfks_std_dev: None,
-            cbs_level: None,
-            cbs_base_log: None,
-            message_modulus: None,
-            carry_modulus: None,
-            ciphertext_modulus: None,
+            ..Default::default()
+        }
+    }
+}
+impl<Scalar: UnsignedInteger> CryptoParametersRecord<Scalar> {
+    pub fn noise_distribution_as_str(noise_distribution: DynamicDistribution<Scalar>) -> String {
+        match noise_distribution {
+            DynamicDistribution::Gaussian(g) => format!("Gaussian({}, {})", g.std, g.mean),
+            DynamicDistribution::TUniform(t) => format!("TUniform({})", t.bound_log2()),
         }
     }
 }
