@@ -11,7 +11,7 @@
 //! due to the huge difference between clear computation and FHE computation
 //! it is absolutely worth to compute the approximation of the inverse.
 use crate::core_crypto::prelude::{CastFrom, CastInto, Numeric, SignedNumeric, UnsignedInteger};
-use crate::integer::bigint::{StaticUnsignedBigInt, U2048, U4096};
+use crate::integer::bigint::{StaticUnsignedBigInt, U1024, U2048, U4096};
 use crate::integer::block_decomposition::DecomposableInto;
 use crate::integer::ciphertext::{RadixCiphertext, SignedRadixCiphertext};
 use crate::integer::server_key::radix::scalar_mul::ScalarMultiplier;
@@ -107,6 +107,14 @@ impl Reciprocable for u128 {
 
 impl Reciprocable for U256 {
     type DoublePrecision = U512;
+}
+
+impl Reciprocable for U512 {
+    type DoublePrecision = U1024;
+}
+
+impl Reciprocable for U1024 {
+    type DoublePrecision = U2048;
 }
 
 impl Reciprocable for U2048 {

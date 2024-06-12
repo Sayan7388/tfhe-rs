@@ -15,7 +15,7 @@ use crate::high_level_api::traits::{
     DivRem, FheEq, FheMax, FheMin, FheOrd, RotateLeft, RotateLeftAssign, RotateRight,
     RotateRightAssign,
 };
-use crate::integer::bigint::U2048;
+use crate::integer::bigint::{U1024, U2048, U512};
 use crate::integer::block_decomposition::DecomposableInto;
 use crate::integer::ciphertext::IntegerCiphertext;
 #[cfg(feature = "gpu")]
@@ -419,6 +419,8 @@ generic_integer_impl_scalar_div_rem!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );
 
@@ -501,6 +503,8 @@ generic_integer_impl_scalar_operation!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );
 generic_integer_impl_scalar_operation!(
@@ -540,6 +544,8 @@ generic_integer_impl_scalar_operation!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );
 generic_integer_impl_scalar_operation!(
@@ -579,6 +585,8 @@ generic_integer_impl_scalar_operation!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );
 generic_integer_impl_scalar_operation!(
@@ -618,6 +626,8 @@ generic_integer_impl_scalar_operation!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );
 generic_integer_impl_scalar_operation!(
@@ -657,6 +667,8 @@ generic_integer_impl_scalar_operation!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );
 generic_integer_impl_scalar_operation!(
@@ -697,6 +709,8 @@ generic_integer_impl_scalar_operation!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );
 generic_integer_impl_scalar_operation!(
@@ -736,6 +750,8 @@ generic_integer_impl_scalar_operation!(
         (super::FheUint128, u8, u16, u32, u64, u128),
         (super::FheUint160, u8, u16, u32, u64, u128, U256),
         (super::FheUint256, u8, u16, u32, u64, u128, U256),
+        (super::FheUint512, u8, u16, u32, u64, u128, U256, U512),
+        (super::FheUint1024, u8, u16, u32, u64, u128, U256, U512, U1024),
         (super::FheUint2048, u8, u16, u32, u64, u128, U256, U2048),
 );
 generic_integer_impl_scalar_operation!(
@@ -775,6 +791,8 @@ generic_integer_impl_scalar_operation!(
         (super::FheUint128, u8, u16, u32, u64, u128),
         (super::FheUint160, u8, u16, u32, u64, u128, U256),
         (super::FheUint256, u8, u16, u32, u64, u128, U256),
+        (super::FheUint512, u8, u16, u32, u64, u128, U256, U512),
+        (super::FheUint1024, u8, u16, u32, u64, u128, U256, U512, U1024),
         (super::FheUint2048, u8, u16, u32, u64, u128, U256, U2048),
 );
 generic_integer_impl_scalar_operation!(
@@ -814,6 +832,8 @@ generic_integer_impl_scalar_operation!(
         (super::FheUint128, u8, u16, u32, u64, u128),
         (super::FheUint160, u8, u16, u32, u64, u128, U256),
         (super::FheUint256, u8, u16, u32, u64, u128, U256),
+        (super::FheUint512, u8, u16, u32, u64, u128, U256, U512),
+        (super::FheUint1024, u8, u16, u32, u64, u128, U256, U512, U1024),
         (super::FheUint2048, u8, u16, u32, u64, u128, U256, U2048),
 );
 generic_integer_impl_scalar_operation!(
@@ -853,6 +873,8 @@ generic_integer_impl_scalar_operation!(
         (super::FheUint128, u8, u16, u32, u64, u128),
         (super::FheUint160, u8, u16, u32, u64, u128, U256),
         (super::FheUint256, u8, u16, u32, u64, u128, U256),
+        (super::FheUint512, u8, u16, u32, u64, u128, U256, U512),
+        (super::FheUint1024, u8, u16, u32, u64, u128, U256, U512, U1024),
         (super::FheUint2048, u8, u16, u32, u64, u128, U256, U2048),
 );
 generic_integer_impl_scalar_operation!(
@@ -887,6 +909,8 @@ generic_integer_impl_scalar_operation!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );
 generic_integer_impl_scalar_operation!(
@@ -921,6 +945,8 @@ generic_integer_impl_scalar_operation!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );
 
@@ -1034,6 +1060,8 @@ generic_integer_impl_scalar_left_operation!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );
 generic_integer_impl_scalar_left_operation!(
@@ -1099,6 +1127,8 @@ generic_integer_impl_scalar_left_operation!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );
 generic_integer_impl_scalar_left_operation!(
@@ -1145,6 +1175,8 @@ generic_integer_impl_scalar_left_operation!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );
 generic_integer_impl_scalar_left_operation!(
@@ -1189,6 +1221,8 @@ generic_integer_impl_scalar_left_operation!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );
 generic_integer_impl_scalar_left_operation!(
@@ -1233,6 +1267,8 @@ generic_integer_impl_scalar_left_operation!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );
 generic_integer_impl_scalar_left_operation!(
@@ -1277,6 +1313,8 @@ generic_integer_impl_scalar_left_operation!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );
 
@@ -1366,6 +1404,8 @@ generic_integer_impl_scalar_operation_assign!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );
 generic_integer_impl_scalar_operation_assign!(
@@ -1402,6 +1442,8 @@ generic_integer_impl_scalar_operation_assign!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );
 generic_integer_impl_scalar_operation_assign!(
@@ -1438,6 +1480,8 @@ generic_integer_impl_scalar_operation_assign!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );
 generic_integer_impl_scalar_operation_assign!(
@@ -1474,6 +1518,8 @@ generic_integer_impl_scalar_operation_assign!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );
 generic_integer_impl_scalar_operation_assign!(
@@ -1510,6 +1556,8 @@ generic_integer_impl_scalar_operation_assign!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );
 generic_integer_impl_scalar_operation_assign!(
@@ -1546,6 +1594,8 @@ generic_integer_impl_scalar_operation_assign!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );
 generic_integer_impl_scalar_operation_assign!(
@@ -1582,6 +1632,8 @@ generic_integer_impl_scalar_operation_assign!(
         (super::FheUint128, u8, u16, u32, u64, u128),
         (super::FheUint160, u8, u16, u32, u64, u128, U256),
         (super::FheUint256, u8, u16, u32, u64, u128, U256),
+        (super::FheUint512, u8, u16, u32, u64, u128, U256, U512),
+        (super::FheUint1024, u8, u16, u32, u64, u128, U256, U1024),
         (super::FheUint2048, u8, u16, u32, u64, u128, U256, U2048),
 );
 generic_integer_impl_scalar_operation_assign!(
@@ -1618,6 +1670,8 @@ generic_integer_impl_scalar_operation_assign!(
         (super::FheUint128, u8, u16, u32, u64, u128),
         (super::FheUint160, u8, u16, u32, u64, u128, U256),
         (super::FheUint256, u8, u16, u32, u64, u128, U256),
+        (super::FheUint512, u8, u16, u32, u64, u128, U256, U512),
+        (super::FheUint1024, u8, u16, u32, u64, u128, U256, U1024),
         (super::FheUint2048, u8, u16, u32, u64, u128, U256, U2048),
 );
 generic_integer_impl_scalar_operation_assign!(
@@ -1654,6 +1708,8 @@ generic_integer_impl_scalar_operation_assign!(
         (super::FheUint128, u8, u16, u32, u64, u128),
         (super::FheUint160, u8, u16, u32, u64, u128, U256),
         (super::FheUint256, u8, u16, u32, u64, u128, U256),
+        (super::FheUint512, u8, u16, u32, u64, u128, U256, U512),
+        (super::FheUint1024, u8, u16, u32, u64, u128, U256, U1024),
         (super::FheUint2048, u8, u16, u32, u64, u128, U256, U2048),
 );
 generic_integer_impl_scalar_operation_assign!(
@@ -1690,6 +1746,8 @@ generic_integer_impl_scalar_operation_assign!(
         (super::FheUint128, u8, u16, u32, u64, u128),
         (super::FheUint160, u8, u16, u32, u64, u128, U256),
         (super::FheUint256, u8, u16, u32, u64, u128, U256),
+        (super::FheUint512, u8, u16, u32, u64, u128, U256, U512),
+        (super::FheUint1024, u8, u16, u32, u64, u128, U256, U1024),
         (super::FheUint2048, u8, u16, u32, u64, u128, U256, U2048),
 );
 generic_integer_impl_scalar_operation_assign!(
@@ -1723,6 +1781,8 @@ generic_integer_impl_scalar_operation_assign!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );
 generic_integer_impl_scalar_operation_assign!(
@@ -1756,5 +1816,7 @@ generic_integer_impl_scalar_operation_assign!(
         (super::FheUint128, u128),
         (super::FheUint160, U256),
         (super::FheUint256, U256),
+        (super::FheUint512, U512),
+        (super::FheUint1024, U1024),
         (super::FheUint2048, U2048),
 );

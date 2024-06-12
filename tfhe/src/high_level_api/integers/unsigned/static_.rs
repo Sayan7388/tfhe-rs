@@ -128,6 +128,18 @@ static_int_type! {
 
 static_int_type! {
     Unsigned {
+        num_bits: 512,
+    }
+}
+
+static_int_type! {
+    Unsigned {
+        num_bits: 1024,
+    }
+}
+
+static_int_type! {
+    Unsigned {
         num_bits: 2048,
     }
 }

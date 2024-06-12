@@ -1,6 +1,6 @@
 #![allow(clippy::use_self)]
 use crate::high_level_api::prelude::*;
-use crate::integer::bigint::{StaticUnsignedBigInt, U2048};
+use crate::integer::bigint::{StaticUnsignedBigInt, U1024, U2048, U512};
 use crate::integer::{I256, U256};
 use crate::js_on_wasm_api::js_high_level_api::keys::TfheCompactPublicKey;
 #[cfg(feature = "zk-pok-experimental")]
@@ -316,13 +316,21 @@ create_wrapper_type_non_native_type!(
         rust_type: U256,
     },
     {
+        type_name: FheUint512,
+        compressed_type_name: CompressedFheUint512,
+        proven_type: ProvenFheUint512,
+        rust_type: U512,
+    },
+    {
+        type_name: FheUint1024,
+        compressed_type_name: CompressedFheUint1024,
+        proven_type: ProvenFheUint1024,
+        rust_type: U1024,
+    },
+    {
         type_name: FheUint2048,
         compressed_type_name: CompressedFheUint2048,
-        compact_type_name: CompactFheUint2048,
-        compact_list_type_name: CompactFheUint2048List,
         proven_type: ProvenFheUint2048,
-        proven_compact_type_name: ProvenCompactFheUint2048,
-        proven_compact_list_type_name: ProvenCompactFheUint2048List,
         rust_type: U2048,
     },
     // Signed
