@@ -650,6 +650,7 @@ template <typename Torus> struct int_radix_lut {
 
   void release(cudaStream_t *streams, uint32_t *gpu_indexes,
                uint32_t gpu_count) {
+#pragma omp parallel for num_threads(active_gpu_count)
     for (uint i = 0; i < active_gpu_count; i++) {
       cuda_drop_async(lut_vec[i], streams[i], gpu_indexes[i]);
       cuda_drop_async(lut_indexes_vec[i], streams[i], gpu_indexes[i]);
@@ -937,7 +938,7 @@ template <typename Torus> struct int_fullprop_buffer {
                       uint32_t gpu_count, int_radix_params params,
                       uint32_t num_radix_blocks, bool allocate_gpu_memory) {
     this->params = params;
-    lut = new int_radix_lut<Torus>(streams, gpu_indexes, gpu_count, params, 2,
+    lut = new int_radix_lut<Torus>(streams, gpu_indexes, 1, params, 2,
                                    num_radix_blocks, allocate_gpu_memory);
 
     if (allocate_gpu_memory) {
@@ -993,7 +994,7 @@ template <typename Torus> struct int_fullprop_buffer {
   void release(cudaStream_t *streams, uint32_t *gpu_indexes,
                uint32_t gpu_count) {
 
-    lut->release(streams, gpu_indexes, gpu_count);
+    lut->release(streams, gpu_indexes, 1);
 
     cuda_drop_async(tmp_small_lwe_vector, streams[0], gpu_indexes[0]);
     cuda_drop_async(tmp_big_lwe_vector, streams[0], gpu_indexes[0]);
@@ -2501,7 +2502,6 @@ template <typename Torus> struct int_comparison_buffer {
 
 template <typename Torus> struct int_div_rem_memory {
   int_radix_params params;
-  bool mem_reuse = false;
 
   // memory objects for other operations
   int_logical_scalar_shift_buffer<Torus> *shift_mem_1;

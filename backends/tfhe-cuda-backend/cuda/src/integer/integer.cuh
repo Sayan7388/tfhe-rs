@@ -574,11 +574,11 @@ void host_full_propagate_inplace(cudaStream_t *streams, uint32_t *gpu_indexes,
   int big_lwe_size = (params.glwe_dimension * params.polynomial_size + 1);
   int small_lwe_size = (params.small_lwe_dimension + 1);
 
-  cudaSetDevice(gpu_indexes[0]);
   for (int i = 0; i < num_blocks; i++) {
     auto cur_input_block = &input_blocks[i * big_lwe_size];
 
     cudaSetDevice(gpu_indexes[0]);
+    /// Since the keyswitch is done on one input only, use only 1 GPU
     cuda_keyswitch_lwe_ciphertext_vector<Torus>(
         streams[0], gpu_indexes[0], mem_ptr->tmp_small_lwe_vector,
         mem_ptr->lut->lwe_trivial_indexes, cur_input_block,
