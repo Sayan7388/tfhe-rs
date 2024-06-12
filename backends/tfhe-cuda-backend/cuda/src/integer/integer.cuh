@@ -778,8 +778,8 @@ reduce_signs(cudaStream_t *streams, uint32_t *gpu_indexes, uint32_t gpu_count,
   if (num_sign_blocks > 2) {
     auto lut = diff_buffer->reduce_signs_lut;
     generate_device_accumulator<Torus>(
-        streams[0], gpu_indexes[0], lut->get_lut(0, 0), glwe_dimension,
-        polynomial_size, message_modulus, carry_modulus,
+        streams[0], gpu_indexes[0], lut->get_lut(gpu_indexes[0], 0),
+        glwe_dimension, polynomial_size, message_modulus, carry_modulus,
         reduce_two_orderings_function);
     lut->broadcast_lut(streams, gpu_indexes, 0);
 
@@ -812,8 +812,9 @@ reduce_signs(cudaStream_t *streams, uint32_t *gpu_indexes, uint32_t gpu_count,
 
     auto lut = diff_buffer->reduce_signs_lut;
     generate_device_accumulator<Torus>(
-        streams[0], gpu_indexes[0], lut->get_lut(0, 0), glwe_dimension,
-        polynomial_size, message_modulus, carry_modulus, final_lut_f);
+        streams[0], gpu_indexes[0], lut->get_lut(gpu_indexes[0], 0),
+        glwe_dimension, polynomial_size, message_modulus, carry_modulus,
+        final_lut_f);
     lut->broadcast_lut(streams, gpu_indexes, 0);
 
     pack_blocks(streams[0], gpu_indexes[0], signs_b, signs_a, big_lwe_dimension,
@@ -831,8 +832,9 @@ reduce_signs(cudaStream_t *streams, uint32_t *gpu_indexes, uint32_t gpu_count,
 
     auto lut = mem_ptr->diff_buffer->reduce_signs_lut;
     generate_device_accumulator<Torus>(
-        streams[0], gpu_indexes[0], lut->get_lut(0, 0), glwe_dimension,
-        polynomial_size, message_modulus, carry_modulus, final_lut_f);
+        streams[0], gpu_indexes[0], lut->get_lut(gpu_indexes[0], 0),
+        glwe_dimension, polynomial_size, message_modulus, carry_modulus,
+        final_lut_f);
     lut->broadcast_lut(streams, gpu_indexes, 0);
 
     integer_radix_apply_univariate_lookup_table_kb(streams, gpu_indexes,
@@ -851,7 +853,7 @@ void scratch_cuda_apply_univariate_lut_kb(
                                       1, num_radix_blocks, allocate_gpu_memory);
   // It is safe to do this copy on GPU 0, because all LUTs always reside on GPU
   // 0
-  cuda_memcpy_async_to_gpu((*mem_ptr)->get_lut(0, 0), input_lut,
+  cuda_memcpy_async_to_gpu((*mem_ptr)->get_lut(gpu_indexes[0], 0), input_lut,
                            (params.glwe_dimension + 1) *
                                params.polynomial_size * sizeof(Torus),
                            streams[0], gpu_indexes[0]);
