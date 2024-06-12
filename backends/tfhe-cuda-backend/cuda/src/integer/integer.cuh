@@ -781,7 +781,7 @@ reduce_signs(cudaStream_t *streams, uint32_t *gpu_indexes, uint32_t gpu_count,
         streams[0], gpu_indexes[0], lut->get_lut(gpu_indexes[0], 0),
         glwe_dimension, polynomial_size, message_modulus, carry_modulus,
         reduce_two_orderings_function);
-    lut->broadcast_lut(streams, gpu_indexes, 0);
+    lut->broadcast_lut(streams, gpu_indexes, gpu_indexes[0]);
 
     while (num_sign_blocks > 2) {
       pack_blocks(streams[0], gpu_indexes[0], signs_b, signs_a,
@@ -815,7 +815,7 @@ reduce_signs(cudaStream_t *streams, uint32_t *gpu_indexes, uint32_t gpu_count,
         streams[0], gpu_indexes[0], lut->get_lut(gpu_indexes[0], 0),
         glwe_dimension, polynomial_size, message_modulus, carry_modulus,
         final_lut_f);
-    lut->broadcast_lut(streams, gpu_indexes, 0);
+    lut->broadcast_lut(streams, gpu_indexes, gpu_indexes[0]);
 
     pack_blocks(streams[0], gpu_indexes[0], signs_b, signs_a, big_lwe_dimension,
                 2, 4);
@@ -835,7 +835,7 @@ reduce_signs(cudaStream_t *streams, uint32_t *gpu_indexes, uint32_t gpu_count,
         streams[0], gpu_indexes[0], lut->get_lut(gpu_indexes[0], 0),
         glwe_dimension, polynomial_size, message_modulus, carry_modulus,
         final_lut_f);
-    lut->broadcast_lut(streams, gpu_indexes, 0);
+    lut->broadcast_lut(streams, gpu_indexes, gpu_indexes[0]);
 
     integer_radix_apply_univariate_lookup_table_kb(streams, gpu_indexes,
                                                    gpu_count, signs_array_out,
@@ -857,7 +857,7 @@ void scratch_cuda_apply_univariate_lut_kb(
                            (params.glwe_dimension + 1) *
                                params.polynomial_size * sizeof(Torus),
                            streams[0], gpu_indexes[0]);
-  (*mem_ptr)->broadcast_lut(streams, gpu_indexes, 0);
+  (*mem_ptr)->broadcast_lut(streams, gpu_indexes, gpu_indexes[0]);
 }
 
 template <typename Torus>

@@ -713,7 +713,6 @@ template <typename Torus> struct int_bit_extract_luts_buffer {
             params.glwe_dimension, params.polynomial_size,
             params.message_modulus, params.carry_modulus, operator_f);
       }
-      lut->broadcast_lut(streams, gpu_indexes, gpu_indexes[0]);
 
       /**
        * we have bits_per_blocks LUTs that should be used for all bits in all
@@ -1446,6 +1445,7 @@ template <typename Torus> struct int_mul_memory {
         luts_array->get_lut_indexes(gpu_indexes[0], lsb_vector_block_count), 1,
         msb_vector_block_count);
 
+    luts_array->broadcast_lut(streams, gpu_indexes, gpu_indexes[0]);
     // create memory object for sum ciphertexts
     sum_ciphertexts_mem = new int_sum_ciphertexts_vec_memory<Torus>(
         streams, gpu_indexes, gpu_count, params, num_radix_blocks,
@@ -2900,6 +2900,7 @@ template <typename Torus> struct int_bitop_buffer {
             streams[0], gpu_indexes[0], lut->get_lut(gpu_indexes[0], 0),
             params.glwe_dimension, params.polynomial_size,
             params.message_modulus, params.carry_modulus, lut_bivariate_f);
+        lut->broadcast_lut(streams, gpu_indexes, gpu_indexes[0]);
       }
       break;
     case BITNOT:
@@ -2913,6 +2914,7 @@ template <typename Torus> struct int_bitop_buffer {
             streams[0], gpu_indexes[0], lut->get_lut(gpu_indexes[0], 0),
             params.glwe_dimension, params.polynomial_size,
             params.message_modulus, params.carry_modulus, lut_not_f);
+        lut->broadcast_lut(streams, gpu_indexes, gpu_indexes[0]);
       }
       break;
     default:
@@ -2941,6 +2943,7 @@ template <typename Torus> struct int_bitop_buffer {
             streams[0], gpu_indexes[0], lut_block, params.glwe_dimension,
             params.polynomial_size, params.message_modulus,
             params.carry_modulus, lut_univariate_scalar_f);
+        lut->broadcast_lut(streams, gpu_indexes, gpu_indexes[0]);
       }
     }
 
