@@ -7,11 +7,11 @@
 /// and split the array among them.
 /// The indexing logic is given by an index array.
 template <typename Torus>
-void multi_gpu_dispatch(cudaStream_t *streams, uint32_t *gpu_indexes,
-                        uint32_t gpu_count, std::vector<Torus *> &dest,
-                        Torus *src, std::vector<Torus *> &dest_indexes,
-                        Torus *src_indexes, uint32_t num_inputs,
-                        uint32_t elements_per_input) {
+void multi_gpu_scatter(cudaStream_t *streams, uint32_t *gpu_indexes,
+                       uint32_t gpu_count, std::vector<Torus *> &dest,
+                       Torus *src, std::vector<Torus *> &dest_indexes,
+                       Torus *src_indexes, uint32_t num_inputs,
+                       uint32_t elements_per_input) {
 
   auto active_gpu_count = get_active_gpu_count(num_inputs, gpu_count);
 
@@ -33,7 +33,7 @@ void multi_gpu_dispatch(cudaStream_t *streams, uint32_t *gpu_indexes,
     dest_indexes.push_back(index_array);
   }
 
-  // #pragma omp parallel for num_threads(num_inputs)
+#pragma omp parallel for num_threads(num_inputs)
   for (uint j = 0; j < num_inputs; j++) {
     int gpu_index = 0;
     Torus index_on_gpu = 0;

@@ -169,14 +169,14 @@ __host__ void integer_radix_apply_univariate_lookup_table_kb(
   /// data on each GPU then when we gather data to GPU 0 we can copy back to the
   /// original indexing
   if (gpu_count > 1) {
-    multi_gpu_dispatch<Torus>(streams, gpu_indexes, gpu_count, lwe_array_in_vec,
-                              lwe_array_in, lwe_indexes_in_vec,
-                              lut->lwe_indexes_in, num_radix_blocks,
-                              big_lwe_dimension + 1);
-    multi_gpu_dispatch<Torus>(streams, gpu_indexes, gpu_count, lwe_after_ks_vec,
-                              lut->tmp_lwe_after_ks, lwe_trivial_indexes_vec,
-                              lut->lwe_trivial_indexes, num_radix_blocks,
-                              small_lwe_dimension + 1);
+    multi_gpu_scatter<Torus>(streams, gpu_indexes, gpu_count, lwe_array_in_vec,
+                             lwe_array_in, lwe_indexes_in_vec,
+                             lut->lwe_indexes_in, num_radix_blocks,
+                             big_lwe_dimension + 1);
+    multi_gpu_scatter<Torus>(streams, gpu_indexes, gpu_count, lwe_after_ks_vec,
+                             lut->tmp_lwe_after_ks, lwe_trivial_indexes_vec,
+                             lut->lwe_trivial_indexes, num_radix_blocks,
+                             small_lwe_dimension + 1);
   } else {
     /// GPU 0 retains the original array
     lwe_array_in_vec.push_back(lwe_array_in);
@@ -260,14 +260,14 @@ __host__ void integer_radix_apply_bivariate_lookup_table_kb(
   std::vector<Torus *> lwe_indexes_in_vec;
   std::vector<Torus *> lwe_trivial_indexes_vec;
   if (gpu_count > 1) {
-    multi_gpu_dispatch<Torus>(streams, gpu_indexes, gpu_count, lwe_array_in_vec,
-                              lwe_array_pbs_in, lwe_indexes_in_vec,
-                              lut->lwe_indexes_in, num_radix_blocks,
-                              big_lwe_dimension + 1);
-    multi_gpu_dispatch<Torus>(streams, gpu_indexes, gpu_count, lwe_after_ks_vec,
-                              lut->tmp_lwe_after_ks, lwe_trivial_indexes_vec,
-                              lut->lwe_trivial_indexes, num_radix_blocks,
-                              small_lwe_dimension + 1);
+    multi_gpu_scatter<Torus>(streams, gpu_indexes, gpu_count, lwe_array_in_vec,
+                             lwe_array_pbs_in, lwe_indexes_in_vec,
+                             lut->lwe_indexes_in, num_radix_blocks,
+                             big_lwe_dimension + 1);
+    multi_gpu_scatter<Torus>(streams, gpu_indexes, gpu_count, lwe_after_ks_vec,
+                             lut->tmp_lwe_after_ks, lwe_trivial_indexes_vec,
+                             lut->lwe_trivial_indexes, num_radix_blocks,
+                             small_lwe_dimension + 1);
   } else {
     /// GPU 0 retains the original array
     lwe_array_in_vec.push_back(lwe_array_pbs_in);

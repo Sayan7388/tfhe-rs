@@ -339,14 +339,14 @@ __host__ void host_integer_sum_ciphertexts_vec_kb(
     std::vector<Torus *> lwe_indexes_in_vec;
     std::vector<Torus *> lwe_trivial_indexes_vec;
     if (gpu_count > 1) {
-      multi_gpu_dispatch<Torus>(streams, gpu_indexes, gpu_count,
-                                lwe_array_in_vec, new_blocks,
-                                lwe_indexes_in_vec, lwe_indexes_in,
-                                message_count, big_lwe_dimension + 1);
-      multi_gpu_dispatch<Torus>(streams, gpu_indexes, gpu_count,
-                                lwe_after_ks_vec, small_lwe_vector,
-                                lwe_trivial_indexes_vec, lwe_indexes_in,
-                                message_count, lwe_dimension + 1);
+      multi_gpu_scatter<Torus>(streams, gpu_indexes, gpu_count,
+                               lwe_array_in_vec, new_blocks, lwe_indexes_in_vec,
+                               lwe_indexes_in, message_count,
+                               big_lwe_dimension + 1);
+      multi_gpu_scatter<Torus>(streams, gpu_indexes, gpu_count,
+                               lwe_after_ks_vec, small_lwe_vector,
+                               lwe_trivial_indexes_vec, lwe_indexes_in,
+                               message_count, lwe_dimension + 1);
     } else {
       /// GPU 0 retains the original array
       lwe_array_in_vec.push_back(new_blocks);
@@ -391,7 +391,7 @@ __host__ void host_integer_sum_ciphertexts_vec_kb(
                        mem_ptr->params.pbs_base_log, mem_ptr->params.pbs_level,
                        mem_ptr->params.grouping_factor, total_count, 2, 0,
                        max_shared_memory, mem_ptr->params.pbs_type, true);
-    
+
     luts_message_carry->release(streams, gpu_indexes, gpu_count);
 
     int rem_blocks = (r > chunk_size) ? r % chunk_size * num_blocks : 0;
